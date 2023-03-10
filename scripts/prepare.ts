@@ -1,7 +1,7 @@
 // generate stub index.html files for dev entry
-import { execSync } from 'node:child_process'
-import fs from 'fs-extra'
 import chokidar from 'chokidar'
+import fs from 'fs-extra'
+import { execSync } from 'node:child_process'
 import { isDev, log, port, r } from './utils'
 
 /**
@@ -11,10 +11,10 @@ async function stubIndexHtml() {
   const views = [
     'options',
     'popup',
-    'background',
+    'background'
   ]
 
-  for (const view of views) {
+  for await (const view of views) {
     await fs.ensureDir(r(`extension/dist/${view}`))
     let data = await fs.readFile(r(`src/${view}/index.html`), 'utf-8')
     data = data

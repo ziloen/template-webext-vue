@@ -28,9 +28,9 @@ browser.tabs.onActivated.addListener(async ({ tabId }) => {
 
   try {
     tab = await browser.tabs.get(previousTabId)
+    // eslint-disable-next-line require-atomic-updates
     previousTabId = tabId
-  }
-  catch {
+  } catch {
     return
   }
 
@@ -43,12 +43,11 @@ onMessage('get-current-tab', async () => {
   try {
     const tab = await browser.tabs.get(previousTabId)
     return {
-      title: tab?.title,
+      title: tab.title
     }
-  }
-  catch {
+  } catch {
     return {
-      title: undefined,
+      title: undefined
     }
   }
 })

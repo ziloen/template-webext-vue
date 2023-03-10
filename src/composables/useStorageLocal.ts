@@ -1,30 +1,30 @@
-import { storage } from 'webextension-polyfill'
 import type {
   MaybeRef,
   RemovableRef,
   StorageLikeAsync,
-  UseStorageAsyncOptions,
+  UseStorageAsyncOptions
 } from '@vueuse/core'
 import {
-  useStorageAsync,
+  useStorageAsync
 } from '@vueuse/core'
+import { storage } from 'webextension-polyfill'
 
 const storageLocal: StorageLikeAsync = {
-  removeItem(key: string) {
+  async removeItem(key: string) {
     return storage.local.remove(key)
   },
 
-  setItem(key: string, value: string) {
+  async setItem(key: string, value: string) {
     return storage.local.set({ [key]: value })
   },
 
-  async getItem(key: string) {
-    return (await storage.local.get(key))[key]
-  },
+  async getItem<T = any>(key: string) {
+    return (await storage.local.get(key))[key] as T
+  }
 }
 
 export const useStorageLocal = <T>(
   key: string,
   initialValue: MaybeRef<T>,
-  options?: UseStorageAsyncOptions<T>,
+  options?: UseStorageAsyncOptions<T>
 ): RemovableRef<T> => useStorageAsync(key, initialValue, storageLocal, options)

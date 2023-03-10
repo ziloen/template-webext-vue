@@ -1,7 +1,8 @@
-import { createApp } from 'vue'
-import App from './Options.vue'
-import { setupApp } from '~/logic/common-setup'
 import '../styles'
+
+import { createApp } from 'vue'
+import { setupApp } from '~/logic/common-setup'
+import App from './Options.vue'
 
 const app = createApp(App)
 setupApp(app)

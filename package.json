@@ -3,7 +3,6 @@
   "displayName": "Vitesse WebExt",
   "version": "0.0.1",
   "private": true,
-  "packageManager": "pnpm@7.29.0",
   "description": "[description]",
   "scripts": {
     "dev": "npm run clear && cross-env NODE_ENV=development run-p dev:*",
@@ -20,24 +19,23 @@
     "pack:xpi": "cross-env WEB_EXT_ARTIFACTS_DIR=./ web-ext build --source-dir ./extension --filename extension.xpi --overwrite-dest",
     "start:chromium": "web-ext run --source-dir ./extension --target=chromium",
     "start:firefox": "web-ext run --source-dir ./extension --target=firefox-desktop",
-    "clear": "rimraf extension/dist extension/manifest.json extension.*",
+    "clear": "rimraf extension/dist extension/manifest.json",
     "lint": "eslint --cache .",
-    "test": "vitest test",
-    "postinstall": "simple-git-hooks"
+    "test": "vitest test"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^0.36.0",
     "@ffflorian/jszip-cli": "^3.1.9",
-    "@iconify/json": "^2.2.31",
+    "@iconify/json": "^2.2.32",
     "@types/fs-extra": "^11.0.1",
-    "@types/node": "^18.14.6",
+    "@types/node": "^18.15.0",
     "@types/webextension-polyfill": "^0.10.0",
-    "@typescript-eslint/eslint-plugin": "^5.54.0",
     "@unocss/reset": "^0.50.4",
     "@vitejs/plugin-vue": "^4.0.0",
-    "@vue/compiler-sfc": "^3.2.47",
-    "@vue/test-utils": "^2.3.0",
+    "@volar-plugins/prettyhtml": "^1.1.0",
+    "@vue/test-utils": "^2.3.1",
     "@vueuse/core": "^9.13.0",
+    "@ziloen/eslint-config": "^0.0.84",
+    "@ziloen/eslint-config-format": "^0.0.84",
     "chokidar": "^3.5.3",
     "cross-env": "^7.0.3",
     "crx": "^5.0.1",
@@ -46,27 +44,42 @@
     "fs-extra": "^11.1.0",
     "jsdom": "^21.1.0",
     "kolorist": "^1.7.0",
-    "lint-staged": "^13.1.2",
     "npm-run-all": "^4.1.5",
-    "rimraf": "^4.3.0",
-    "simple-git-hooks": "^2.8.1",
+    "rimraf": "^4.4.0",
     "typescript": "^4.9.5",
     "unocss": "^0.50.4",
     "unplugin-auto-import": "^0.15.1",
     "unplugin-icons": "^0.15.3",
-    "unplugin-vue-components": "^0.24.0",
+    "unplugin-vue-components": "^0.24.1",
     "vite": "^4.1.4",
     "vitest": "^0.29.2",
     "vue": "^3.2.47",
-    "vue-demi": "^0.13.11",
     "web-ext": "^7.5.0",
     "webext-bridge": "^5.0.5",
     "webextension-polyfill": "^0.10.0"
   },
-  "simple-git-hooks": {
-    "pre-commit": "pnpm lint-staged"
-  },
-  "lint-staged": {
-    "*": "eslint --fix"
+  "eslintConfig": {
+    "rules": {
+      "react/no-unknown-property": 0
+    },
+    "extends": [
+      "@ziloen",
+      "@ziloen/eslint-config-format"
+    ],
+    "parserOptions": {
+      "project": "./tsconfig.json"
+    },
+    "settings": {
+      "react": {
+        "version": "18"
+      }
+    },
+    "ignorePatterns": [
+      "dist",
+      "node_modules",
+      "public",
+      "volar.config.js",
+      "extension"
+    ]
   }
 }

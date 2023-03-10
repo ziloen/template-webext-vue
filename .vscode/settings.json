@@ -1,11 +1,10 @@
 {
-  "cSpell.words": ["Vitesse"],
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "vite.autoStart": false,
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
-  },
-  "files.associations": {
-    "*.css": "postcss"
-  }
+  "prettier.enable": false,
+  "editor.codeActionsOnSave": [
+    // only sort imports
+    "source.sortImports",
+    // remove unused imports & sort imports
+    // "source.organizeImports",
+    "source.fixAll.eslint",
+  ],
 }
