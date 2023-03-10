@@ -14,7 +14,7 @@
     "jsx": "preserve",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "forceConsistentCasingInFileNames": true,
     "typeRoots": [
       "src/types",

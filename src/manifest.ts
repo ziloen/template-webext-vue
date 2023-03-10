@@ -35,6 +35,8 @@ export async function getManifest() {
       'tabs',
       'storage',
       'activeTab',
+      'omnibox',
+      '<all_urls>',
       'http://*/',
       'https://*/'
     ],

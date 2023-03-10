@@ -16,9 +16,9 @@
     "pack": "cross-env NODE_ENV=production run-p pack:*",
     "pack:zip": "rimraf extension.zip && jszip-cli add extension/* -o ./extension.zip",
     "pack:crx": "crx pack extension -o ./extension.crx",
-    "pack:xpi": "cross-env WEB_EXT_ARTIFACTS_DIR=./ web-ext build --source-dir ./extension --filename extension.xpi --overwrite-dest",
-    "start:chromium": "web-ext run --source-dir ./extension --target=chromium",
-    "start:firefox": "web-ext run --source-dir ./extension --target=firefox-desktop",
+    "pack:xpi": "cross-env WEB_EXT_ARTIFACTS_DIR=./ web-ext build",
+    "start:chromium": "web-ext run --target=chromium",
+    "start:firefox": "web-ext run",
     "clear": "rimraf extension/dist extension/manifest.json",
     "lint": "eslint --cache .",
     "test": "vitest test"
@@ -81,5 +81,28 @@
       "volar.config.js",
       "extension"
     ]
+  },
+  "webExt": {
+    "sourceDir": "extension",
+    "artifactsDir": "./",
+    "ignoreFiles": [
+      "package-lock.json",
+      "yarn.lock",
+      "pnpm-lock.yaml"
+    ],
+    "run": {
+      "browserConsole": false,
+      "firefoxPreview": [
+        "mv3"
+      ],
+      "firefox": "nightly",
+      "target": [
+        "firefox-desktop"
+      ]
+    },
+    "build": {
+      "overwriteDest": true,
+      "filename": "extension.xpi"
+    }
   }
 }
