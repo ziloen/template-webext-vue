@@ -1,4 +1,4 @@
-import { onMessage, sendMessage } from 'webext-bridge'
+import { onMessage, sendMessage } from 'webext-bridge/background'
 import type { Tabs } from 'webextension-polyfill'
 
 // only on dev mode
@@ -43,11 +43,11 @@ onMessage('get-current-tab', async () => {
   try {
     const tab = await browser.tabs.get(previousTabId)
     return {
-      title: tab.title
+      title: tab.title ?? ''
     }
   } catch {
     return {
-      title: undefined
+      title: ''
     }
   }
 })
