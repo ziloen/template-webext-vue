@@ -15,7 +15,7 @@ export default defineConfig({
   build: {
     watch: isDev
       ? {}
-      : undefined,
+      : null,
     outDir: r('extension/dist/contentScripts'),
     cssCodeSplit: false,
     emptyOutDir: false,
