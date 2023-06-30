@@ -1,4 +1,4 @@
-import '../styles'
+import '~/styles'
 
 import { createApp } from 'vue'
 import { setupApp } from '~/logic/common-setup'
