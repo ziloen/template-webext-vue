@@ -1,10 +1,16 @@
-import { presetAttributify, presetIcons, presetUno, transformerDirectives } from 'unocss'
-import { defineConfig } from 'unocss/vite'
+import {
+  defineConfig,
+  presetIcons,
+  presetUno,
+  transformerDirectives
+} from 'unocss'
+import { presetZiloen } from 'unocss-preset-ziloen'
+
 
 export default defineConfig({
   presets: [
+    presetZiloen(),
     presetUno(),
-    presetAttributify(),
     presetIcons()
   ],
   transformers: [
