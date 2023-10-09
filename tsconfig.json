@@ -35,9 +35,10 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
-    "typeRoots": [
-      "src/types",
-      "node_modules/@types"
+    "types": [
+      "ts-lib-enhance",
+      "ts-lib-enhance/highlight",
+      "ts-lib-enhance/view-transition",
     ],
     "paths": {
       "~/*": [

@@ -24,43 +24,45 @@
     "test": "vitest test"
   },
   "devDependencies": {
+    "@crxjs/vite-plugin": "2.0.0-beta.19",
     "@ffflorian/jszip-cli": "^3.4.1",
-    "@iconify/json": "^2.2.121",
+    "@iconify/json": "^2.2.126",
     "@types/fs-extra": "^11.0.2",
-    "@types/node": "^20.7.1",
+    "@types/node": "^20.8.3",
     "@types/webextension-polyfill": "^0.10.4",
-    "@unocss/reset": "^0.56.4",
-    "@vitejs/plugin-vue": "^4.3.4",
+    "@unocss/reset": "^0.56.5",
+    "@vitejs/plugin-vue": "^4.4.0",
     "@vue/test-utils": "^2.4.1",
-    "@vueuse/core": "^10.4.1",
-    "@ziloen/eslint-config": "^0.0.108",
-    "@ziloen/eslint-config-format": "^0.0.108",
+    "@vueuse/core": "^10.5.0",
+    "@ziloen/eslint-config-format": "^0.0.109",
+    "@ziloen/eslint-config-vue": "^0.0.109",
     "chokidar": "^3.5.3",
     "cross-env": "^7.0.3",
     "crx": "^5.0.1",
-    "eslint": "^8.50.0",
+    "eslint": "^8.51.0",
     "esno": "^0.17.0",
     "fs-extra": "^11.1.1",
     "jsdom": "^22.1.0",
     "kolorist": "^1.8.0",
     "npm-run-all": "^4.1.5",
     "rimraf": "^5.0.5",
+    "ts-lib-enhance": "^1.0.14",
     "typescript": "^5.2.2",
-    "unocss": "^0.56.4",
-    "unocss-preset-ziloen": "^0.0.2",
+    "unocss": "^0.56.5",
+    "unocss-preset-ziloen": "^0.0.3",
     "unplugin-auto-import": "^0.16.6",
     "unplugin-icons": "^0.17.0",
     "unplugin-vue-components": "^0.25.2",
-    "vite": "^4.4.9",
-    "vitest": "^0.34.5",
-    "volar-service-prettyhtml": "^0.0.13",
+    "vite": "^4.4.11",
+    "vitest": "^0.34.6",
+    "volar-service-prettyhtml": "^0.0.14",
     "vue": "^3.3.4",
-    "web-ext": "^7.7.0",
+    "web-ext": "^7.8.0",
     "webext-bridge": "^6.0.1",
     "webextension-polyfill": "^0.10.0"
   },
   "dependencies": {
-    "@vueuse/rxjs": "^10.4.1",
+    "@vueuse/rxjs": "^10.5.0",
     "rxjs": "^7.8.1"
   },
   "eslintConfig": {
@@ -68,16 +70,11 @@
       "react/no-unknown-property": 0
     },
     "extends": [
-      "@ziloen",
+      "@ziloen/eslint-config-vue",
       "@ziloen/eslint-config-format"
     ],
     "parserOptions": {
       "project": "./tsconfig.json"
-    },
-    "settings": {
-      "react": {
-        "version": "18"
-      }
     },
     "ignorePatterns": [
       "dist",
