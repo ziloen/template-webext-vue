@@ -1,5 +1,7 @@
 {
-  "prettier.enable": false,
+  "[typescript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
   "editor.codeActionsOnSave": [
     // only sort imports
     "source.sortImports",
@@ -7,4 +9,6 @@
     // "source.organizeImports",
     "source.fixAll.eslint",
   ],
+  "eslint.format.enable": true,
+  "prettier.enable": false
 }
