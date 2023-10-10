@@ -15,16 +15,12 @@ export async function getManifest() {
     description: pkg.description,
     action: {
       default_icon: './assets/icon-512.png',
-      default_popup: './dist/popup/index.html',
+      default_popup: './dist/pages/popup/index.html'
     },
     options_ui: {
-      page: './dist/options/index.html',
-      open_in_tab: true,
+      page: './dist/pages/options/index.html',
+      open_in_tab: true
     },
-    // background: {
-    //   page: './dist/background/index.html',
-    //   persistent: false
-    // },
     background: isFirefoxEnv
       ? { scripts: ['dist/background/index.mjs'], type: 'module' }
       : { service_worker: './dist/background/index.mjs' },
@@ -42,6 +38,12 @@ export async function getManifest() {
     host_permissions: [
       '<all_urls>',
       '*://*/*',
+    ],
+    content_scripts: [
+      {
+        matches: ['<all_urls>'],
+        js: ['dist/contentScripts/index.global.js']
+      }
     ],
     web_accessible_resources: [
       {
