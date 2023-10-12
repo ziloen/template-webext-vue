@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
-import { sharedConfig } from './vite.config'
-import { isDev, r } from './scripts/utils'
 import packageJson from './package.json'
+import { isDev, r } from './scripts/utils'
+import { sharedConfig } from './vite.config'
 
 // bundling the content script using Vite
 export default defineConfig({
@@ -15,7 +15,8 @@ export default defineConfig({
   },
   build: {
     watch: isDev
-      ? {}
+      // https://github.com/vitejs/vite/issues/13234
+      ? { exclude: ['node_modules/**', '/__uno.css'] }
       : null,
     outDir: r('extension/dist/background'),
     cssCodeSplit: false,

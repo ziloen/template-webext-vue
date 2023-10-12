@@ -15,7 +15,8 @@ export default defineConfig({
   },
   build: {
     watch: isDev
-      ? {}
+      // https://github.com/vitejs/vite/issues/13234
+      ? { exclude: ['node_modules/**', '/__uno.css'] }
       : null,
     outDir: r('extension/dist/contentScripts'),
     cssCodeSplit: false,
