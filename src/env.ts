@@ -1,3 +1,4 @@
+// https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Content_scripts#restricted_domains
 const forbiddenProtocols = [
   'chrome-extension://',
   'chrome-search://',
@@ -9,6 +10,7 @@ const forbiddenProtocols = [
   'moz-extension://',
   'https://addons.mozilla.org',
   'about:',
+  'view-source:',
 ]
 
 export function isForbiddenUrl(url: string): boolean {
