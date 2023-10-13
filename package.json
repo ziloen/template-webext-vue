@@ -30,10 +30,10 @@
   "devDependencies": {
     "@crxjs/vite-plugin": "2.0.0-beta.19",
     "@ffflorian/jszip-cli": "^3.4.1",
-    "@iconify/json": "^2.2.127",
+    "@iconify/json": "^2.2.128",
     "@types/fs-extra": "^11.0.2",
     "@types/lodash-es": "^4.17.9",
-    "@types/node": "^20.8.4",
+    "@types/node": "^20.8.5",
     "@types/webextension-polyfill": "^0.10.4",
     "@unocss/reset": "^0.56.5",
     "@vitejs/plugin-vue": "^4.4.0",
@@ -68,6 +68,7 @@
   },
   "dependencies": {
     "@vueuse/rxjs": "^10.5.0",
+    "@wai-ri/core": "^0.0.101",
     "lodash-es": "^4.17.21",
     "pinia": "^2.1.6",
     "rxjs": "^7.8.1",
