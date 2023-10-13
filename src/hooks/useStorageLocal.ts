@@ -6,8 +6,18 @@ import { filter, fromEventPattern, map, share } from 'rxjs'
 
 export const WEBEXT_STORAGE_UPDATE_KEY = '__webext_storage_update_key__'
 
-type ChangesType = Partial<Record<string, { oldValue?: unknown; newValue?: unknown }>>
+export type StorageChange = { oldValue?: unknown; newValue?: unknown }
+export type ChangesType = Partial<Record<string, StorageChange>>
 
+
+/**
+ * ignore changes from self
+ */
+const ignoreSet = new Set<string>()
+
+/**
+ * browser.storage.local.onChanged event stream
+ */
 export const storageLocalChanged$ = fromEventPattern<ChangesType>(
   handler => browser.storage.local.onChanged.addListener(handler),
   handler => browser.storage.local.onChanged.removeListener(handler)
@@ -15,9 +25,10 @@ export const storageLocalChanged$ = fromEventPattern<ChangesType>(
   share({ resetOnRefCountZero: true })
 )
 
-// ignore updates from self
-const ignoreSet = new Set<string>()
 
+/**
+ * browser.storage.local.onChanged event stream, filtered by changes from others
+ */
 export const changedFromOthers$ = storageLocalChanged$.pipe(
   filter(change => {
     if (!Object.hasOwn(change, WEBEXT_STORAGE_UPDATE_KEY)) return true
@@ -37,6 +48,7 @@ export const changedFromOthers$ = storageLocalChanged$.pipe(
 )
 
 
+
 type StorageRefOptions<T> = {
   key: string
   beforeSet?: (value: T) => unknown
@@ -44,7 +56,7 @@ type StorageRefOptions<T> = {
 }
 
 
-export function useExtStorageRef<T>(value: T, options: StorageRefOptions<T>) {
+export function useStorageLocal<T>(value: T, options: StorageRefOptions<T>) {
   const defaultValue = cloneDeep(value)
   const state = ref(value) as Ref<T>
   const key = options.key
@@ -103,6 +115,29 @@ export function useExtStorageRef<T>(value: T, options: StorageRefOptions<T>) {
   })
 
   return state
+}
+
+
+/**
+ * 
+ * @param key storage.local key
+ * @param onChange callback
+ * @example
+ * ```ts
+ * useStorageLocalChange('key', ({ newValue, oldValue }) => {
+ *   console.log("new value:", newValue)
+ *   console.log("old value:", oldValue)
+ * })
+ * ```
+ */
+export function useStorageLocalChange(key: string, onChange: (change: StorageChange) => void) {
+  useSubscription(
+    storageLocalChanged$.subscribe(changes => {
+      if (Object.hasOwn(changes, key)) {
+        onChange(changes[key]!)
+      }
+    })
+  )
 }
 
 
