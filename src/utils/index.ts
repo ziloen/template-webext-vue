@@ -1,3 +1,3 @@
-export * from './execFunc'
-export * from './getActiveTab'
+export * from './scripting'
+export * from './tabs'
 
