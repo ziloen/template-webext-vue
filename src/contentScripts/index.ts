@@ -16,7 +16,7 @@ import App from './views/App.vue'
   const container = document.createElement('div')
   container.id = __NAME__
   const root = document.createElement('div')
-  const shadowDOM = container.attachShadow?.({ mode: __DEV__ ? 'open' : 'closed' }) || container
+  const shadowDOM = container.attachShadow?.({ mode: __DEV__ ? 'open' : 'closed' })
 
   // style injection example 1
   // const styleSheet = new CSSStyleSheet()
@@ -26,8 +26,10 @@ import App from './views/App.vue'
   // style injection example 2
   const styleEl = document.createElement('link')
   styleEl.setAttribute('rel', 'stylesheet')
-  styleEl.setAttribute('href', browser.runtime.getURL('dist/contentScripts/style.css'))
+  styleEl.setAttribute('href', globalThis.browser!.runtime.getURL('dist/contentScripts/style.css'))
   shadowDOM.append(styleEl)
+
+  const a = browser
 
   shadowDOM.append(root)
   document.body.append(container)
