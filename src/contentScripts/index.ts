@@ -1,8 +1,7 @@
-/* eslint-disable no-console */
-import { onMessage } from 'webext-bridge/content-script'
 import { createApp } from 'vue'
-import App from './views/App.vue'
+import { onMessage } from 'webext-bridge/content-script'
 import { setupApp } from '~/logic/common-setup'
+import App from './views/App.vue'
 
 // Firefox `browser.tabs.executeScript()` requires scripts return a primitive value
 (() => {
@@ -17,11 +16,19 @@ import { setupApp } from '~/logic/common-setup'
   const container = document.createElement('div')
   container.id = __NAME__
   const root = document.createElement('div')
-  const styleEl = document.createElement('link')
   const shadowDOM = container.attachShadow?.({ mode: __DEV__ ? 'open' : 'closed' }) || container
+
+  // style injection example 1
+  // const styleSheet = new CSSStyleSheet()
+  // styleSheet.replaceSync(await (await fetch(browser.runtime.getURL('dist/contentScripts/style.css'))).text())
+  // shadowDOM.adoptedStyleSheets = [styleSheet]
+
+  // style injection example 2
+  const styleEl = document.createElement('link')
   styleEl.setAttribute('rel', 'stylesheet')
   styleEl.setAttribute('href', browser.runtime.getURL('dist/contentScripts/style.css'))
   shadowDOM.append(styleEl)
+
   shadowDOM.append(root)
   document.body.append(container)
   const app = createApp(App)
