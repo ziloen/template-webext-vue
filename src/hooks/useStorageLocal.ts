@@ -10,10 +10,6 @@ export type StorageChange = { oldValue?: unknown; newValue?: unknown }
 export type ChangesType = Partial<Record<string, StorageChange>>
 
 
-/**
- * ignore changes from self
- */
-const ignoreSet = new Set<string>()
 
 /**
  * browser.storage.local.onChanged event stream
@@ -26,44 +22,34 @@ export const storageLocalChanged$ = fromEventPattern<ChangesType>(
 )
 
 
-/**
- * browser.storage.local.onChanged event stream, filtered by changes from others
- */
-export const changedFromOthers$ = storageLocalChanged$.pipe(
-  filter(change => {
-    if (!Object.hasOwn(change, WEBEXT_STORAGE_UPDATE_KEY)) return true
-
-    const id = change[WEBEXT_STORAGE_UPDATE_KEY]?.newValue
-
-    if (typeof id !== 'string') return true
-
-    if (ignoreSet.has(id)) {
-      ignoreSet.delete(id)
-      return false
-    }
-
-    return true
-  }),
-  share({ resetOnRefCountZero: true })
-)
-
-
 
 type StorageRefOptions<T> = {
+  /** storage.local key */
   key: string
+  /**
+   * change value before set to storage
+   */
   beforeSet?: (value: T) => unknown
-  beforeGet?: (value: unknown) => T
+  /**
+   * change value after get from storage
+   */
+  afterGet?: (value: unknown) => T
 }
 
 
 export function useStorageLocal<T>(value: T, options: StorageRefOptions<T>) {
   const defaultValue = cloneDeep(value)
   const state = ref(value) as Ref<T>
+  // storage.local key
   const key = options.key
-  const beforeGet = options.beforeGet ?? (v => v as T)
+  // change value after get from storage
+  const afterGet = options.afterGet ?? (v => v as T)
+  // change value before set to storage
   const beforeSet = options.beforeSet ?? (v => v)
+  /** ignore changes from self */
+  const ignoreSet = new Set<string>()
 
-  // update stroage.local when state.value changed
+  // update stroage.local when state changed
   const { ignoreUpdates } = ignorableWatch(state, (newVal, oldVal) => {
     const newLocalVal = beforeSet(newVal)
 
@@ -81,35 +67,49 @@ export function useStorageLocal<T>(value: T, options: StorageRefOptions<T>) {
 
   // update from others
   useSubscription(
-    changedFromOthers$
-      .pipe(
-        filter(change => Object.hasOwn(change, options.key)),
-        map(change => change[options.key]!),
-      )
-      .subscribe(change => {
-        if (Object.hasOwn(change, 'newValue')) {
-          const newVal = beforeGet(change.newValue)
-          ignoreUpdates(() => {
-            state.value = newVal
-          })
-        } else {
-          ignoreUpdates(() => {
-            state.value = defaultValue
-          })
+    storageLocalChanged$.pipe(
+      filter(changes => {
+        // if storage key didn't change, ignore
+        if (!Object.hasOwn(changes, key)) return false
+        // if update key not exist, apply changes
+        if (!Object.hasOwn(changes, WEBEXT_STORAGE_UPDATE_KEY)) return true
+
+        const id = changes[WEBEXT_STORAGE_UPDATE_KEY]?.newValue
+
+        if (typeof id !== 'string') return true
+
+        if (ignoreSet.has(id)) {
+          ignoreSet.delete(id)
+          return false
         }
-      })
+
+        return true
+      }),
+      map(changes => changes[key]!),
+    ).subscribe(change => {
+      if (Object.hasOwn(change, 'newValue')) {
+        const newVal = afterGet(change.newValue)
+        ignoreUpdates(() => {
+          state.value = newVal
+        })
+      } else {
+        ignoreUpdates(() => {
+          state.value = cloneDeep(defaultValue)
+        })
+      }
+    })
   )
 
   // init state
   browser.storage.local.get(key).then(result => {
     if (Object.hasOwn(result, key)) {
-      const newVal = beforeGet(result[key])
+      const newVal = afterGet(result[key])
       ignoreUpdates(() => {
         state.value = newVal
       })
     } else {
       ignoreUpdates(() => {
-        state.value = defaultValue
+        state.value = cloneDeep(defaultValue)
       })
     }
   })
