@@ -78,8 +78,7 @@ export function useStorageLocal<T>(value: T, options: StorageRefOptions<T>) {
 
         if (typeof id !== 'string') return true
 
-        if (ignoreSet.has(id)) {
-          ignoreSet.delete(id)
+        if (ignoreSet.delete(id)) {
           return false
         }
 
