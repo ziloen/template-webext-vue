@@ -1,4 +1,4 @@
-import { CSSProperties, Teleport, createVNode, h, ref } from 'vue'
+import { CSSProperties, Teleport, createBlock, createVNode, h, ref, renderSlot } from 'vue'
 
 
 
@@ -43,7 +43,7 @@ export const VueShadow = defineComponent<Props>((props, { slots }) => {
   const styleLoaded = ref(false)
 
   onMounted(() => {
-    shadowRootRef.value = containerRef.value.attachShadow({ mode: props.mode || 'closed' })
+    shadowRootRef.value = containerRef.value.attachShadow({ mode: props.mode ?? 'closed' })
     shadowRootRef.value.adoptedStyleSheets = [contentStyle]
     const result = initStyle()
     if (result === true) {
@@ -58,6 +58,6 @@ export const VueShadow = defineComponent<Props>((props, { slots }) => {
   return () => h(
     props.tag ?? 'div',
     { style: { display: 'contents' }, class: props.class, ref: containerRef },
-    [shadowRootRef.value && createVNode(Teleport, { to: shadowRootRef.value }, slots.default)],
+    [shadowRootRef.value && createVNode(Teleport, { to: shadowRootRef.value }, renderSlot(slots, 'default'))],
   )
 })
