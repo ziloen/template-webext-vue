@@ -1,8 +1,9 @@
 import { bgCyan, black } from 'kolorist'
 import { resolve } from 'node:path'
+import { cwd } from 'node:process'
 
 export const port = parseInt(process.env.PORT ?? '') || 3303
-export const r = (...args: string[]) => resolve(__dirname, '..', ...args)
+export const r = (...args: string[]) => resolve(cwd(), ...args)
 export const isDev = process.env.NODE_ENV !== 'production'
 export const isFirefoxEnv = process.env.EXTENSION === 'firefox'
 

@@ -1,4 +1,15 @@
-import { CSSProperties, Teleport, createBlock, createVNode, h, ref, renderSlot } from 'vue'
+import {
+  CSSProperties,
+  Fragment,
+  Teleport,
+  createBlock,
+  createCommentVNode,
+  createElementBlock,
+  createVNode,
+  openBlock,
+  ref,
+  renderSlot
+} from 'vue'
 
 
 
@@ -55,9 +66,24 @@ export const VueShadow = defineComponent<Props>((props, { slots }) => {
     }
   })
 
-  return () => h(
-    props.tag ?? 'div',
-    { style: { display: 'contents' }, class: props.class, ref: containerRef },
-    [shadowRootRef.value && createVNode(Teleport, { to: shadowRootRef.value }, renderSlot(slots, 'default'))],
+  return () => (
+    openBlock(), createElementBlock(Fragment, null, [
+      createVNode(
+        props.tag ?? 'div',
+        { style: { display: 'contents' }, class: props.class, ref: containerRef },
+        null,
+        8,
+        ['class']
+      ),
+      shadowRootRef.value
+        ? (openBlock(), createBlock(
+            Teleport,
+            { to: shadowRootRef.value },
+            [renderSlot(slots, 'default')],
+            8,
+            ['to']
+          ))
+        : createCommentVNode('', true),
+    ], 64)
   )
 })

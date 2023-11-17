@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     Logo: typeof import('./../components/Logo.vue')['default']
     PixelarticonsPower: typeof import('~icons/pixelarticons/power')['default']
+    PixelarticonsZap: typeof import('~icons/pixelarticons/zap')['default']
     SharedSubtitle: typeof import('./../components/SharedSubtitle.vue')['default']
   }
 }
