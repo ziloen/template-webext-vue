@@ -1,6 +1,6 @@
 import { format, vue } from '@ziloen/eslint-config'
 
-/** @type { import("@ziloen/eslint-config").FlatESLintConfigItem[] } */
+/** @type { import("@ziloen/eslint-config").FlatESLintConfig[] } */
 export default [
   ...vue({ tsconfigPath: './tsconfig.json' }),
   ...format,
