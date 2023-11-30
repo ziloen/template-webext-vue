@@ -9,7 +9,7 @@ import IconsResolver from 'unplugin-icons/resolver'
 import Icons from 'unplugin-icons/vite'
 import Components from 'unplugin-vue-components/vite'
 import type { Plugin, UserConfig } from 'vite'
-import { defineConfig } from 'vite'
+import { defineConfig, mergeConfig } from 'vite'
 import { isDev, port, r } from './scripts/utils'
 
 export const sharedConfig: UserConfig = {
