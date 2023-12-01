@@ -1,37 +1,11 @@
-import { type Runtime } from 'webextension-polyfill'
-
-/**
- * Stream protocol map
- *
- * channel: [data, return]
- *
- * @example
- * ```ts
- * type StreamProtocolMap = {
- *   example: [data: string, return: number]
- * }
- *
- * const stream = openStream('example')
- *
- * stream.send('hello')
- * stream.onMessage((msg) => console.log(msg)) // msg: number
- *
- * onOpenStreamChannel('example', (stream) => {
- *   stream.onMessage(async (msg) => {
- *    const data = await doSomething(msg) // msg: string
- *    stream.send(data) // data: number
- *  })
- * ```
- */
-export type StreamProtocolMap = {
-  'example': [string, number]
-}
-
+import { noop } from 'lodash-es'
+import type { Runtime } from 'webextension-polyfill'
+import type { StreamProtocol } from './index'
 
 /**
  * Stream interface for sending and receiving messages
  */
-export type Stream<SendData = unknown, MsgData = unknown> = {
+type Stream<SendData = unknown, MsgData = unknown> = {
   /**
    * signal for aborting the stream
    * @example
@@ -79,11 +53,12 @@ export type Stream<SendData = unknown, MsgData = unknown> = {
   iter(msg?: SendData): AsyncIterable<MsgData>
 }
 
-
 /**
  * @private
  */
-function createStream<T = unknown, K = unknown>(port: Runtime.Port): Stream<T, K> {
+function createStream<T = unknown, K = unknown>(
+  port: Runtime.Port
+): Stream<T, K> {
   let connected = true
   const abortController = new AbortController()
 
@@ -114,7 +89,7 @@ function createStream<T = unknown, K = unknown>(port: Runtime.Port): Stream<T, K
       let resolve: (value: K) => void
 
       const cleanupOnMessage = onMessage(msg => resolve(msg))
-      const cleanupOnDisconnect = onClose(() => resolve = () => {})
+      const cleanupOnDisconnect = onClose(() => (resolve = noop))
 
       if (args.length) port.postMessage(args[0])
 
@@ -131,11 +106,11 @@ function createStream<T = unknown, K = unknown>(port: Runtime.Port): Stream<T, K
   }
 }
 
-
-type StreamListenerCallback<SendData, MsgData> = (stream: Stream<SendData, MsgData>) => void
+type StreamListenerCallback<SendData, MsgData> = (
+  stream: Stream<SendData, MsgData>
+) => void
 
 const streamListenersMap = new Map<string, StreamListenerCallback<any, any>>()
-
 
 /**
  * @example
@@ -148,17 +123,15 @@ const streamListenersMap = new Map<string, StreamListenerCallback<any, any>>()
  * })
  * ```
  */
-export function onOpenStream<T extends keyof StreamProtocolMap>(
+export function onOpenStream<T extends keyof StreamProtocol>(
   channel: T,
-  callback: (stream: Stream<StreamProtocolMap[T][1], StreamProtocolMap[T][0]>) => void
+  callback: (stream: Stream<StreamProtocol[T][1], StreamProtocol[T][0]>) => void
 ) {
   const listener = streamListenersMap.get(channel)
   if (listener) throw new Error(`Channel "${channel}" already has a listener.`)
   streamListenersMap.set(channel, callback)
   return () => streamListenersMap.delete(channel)
 }
-
-
 
 /**
  * @example
@@ -177,11 +150,10 @@ export function onOpenStream<T extends keyof StreamProtocolMap>(
  * }
  * ```
  */
-export function openStream<T extends keyof StreamProtocolMap>(channel: T) {
+export function openStream<T extends keyof StreamProtocol>(channel: T) {
   const port = browser.runtime.connect({ name: channel })
-  return createStream<StreamProtocolMap[T][0], StreamProtocolMap[T][1]>(port)
+  return createStream<StreamProtocol[T][0], StreamProtocol[T][1]>(port)
 }
-
 
 browser.runtime.onConnect.addListener(port => {
   const channel = port.name

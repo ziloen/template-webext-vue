@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import packageJson from './package.json'
 import { isDev, r } from './scripts/utils'
-import { sharedConfig } from './vite.config'
+import { sharedConfig } from './vite.config.js'
 
 // bundling the content script using Vite
 export default defineConfig({
@@ -14,22 +14,24 @@ export default defineConfig({
     'process.env.NODE_ENV': JSON.stringify(isDev ? 'development' : 'production'),
   },
   build: {
-    watch: isDev
-      // https://github.com/vitejs/vite/issues/13234
-      ? { exclude: ['node_modules/**', '/__uno.css'] }
-      : null,
+    watch: isDev ? { } : null,
     outDir: r('extension/dist/background'),
     cssCodeSplit: false,
     emptyOutDir: false,
     sourcemap: isDev ? 'inline' : false,
-    lib: {
-      entry: r('src/pages/background/main.ts'),
-      name: packageJson.name,
-      formats: ['iife'],
-    },
+    // lib: {
+    //   entry: r('src/pages/background/main.ts'),
+    //   name: packageJson.name,
+    //   formats: ['iife'],
+    // },
+
     rollupOptions: {
+      input: {
+        index: r('src/pages/background/main.ts'),
+      },
       output: {
-        entryFileNames: 'index.mjs',
+        entryFileNames: 'index.js',
+        format: 'es',
         extend: true,
       },
     },

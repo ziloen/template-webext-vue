@@ -42,12 +42,12 @@ export async function getManifest() {
     content_scripts: [
       {
         matches: ['<all_urls>'],
-        js: ['dist/contentScripts/index.global.js']
+        js: ['dist/content-scripts/index.js']
       }
     ],
     web_accessible_resources: [
       {
-        resources: ['dist/contentScripts/style.css'],
+        resources: ['dist/content-scripts/style.css'],
         matches: ['<all_urls>']
       }
     ],

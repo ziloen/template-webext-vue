@@ -1,6 +1,9 @@
 {
   "[typescript]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
   },
   "css.customData": [
     ".vscode/css-data.json"
@@ -10,7 +13,7 @@
     "source.sortImports",
     // remove unused imports & sort imports
     // "source.organizeImports",
-    "source.fixAll.eslint",
+    // "source.fixAll.eslint",
   ],
   "emmet.extensionsPath": [
     ".vscode/emmet"
