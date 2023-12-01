@@ -2,6 +2,10 @@ import { noop } from 'lodash-es'
 import type { Runtime } from 'webextension-polyfill'
 import type { StreamProtocol } from './index'
 
+type StreamKey = keyof StreamProtocol
+type StreamData<K extends StreamKey> = StreamProtocol[K][0]
+type StreamReturn<K extends StreamKey> = StreamProtocol[K][1]
+
 /**
  * Stream interface for sending and receiving messages
  */
@@ -52,6 +56,12 @@ type Stream<SendData = unknown, MsgData = unknown> = {
    */
   iter(msg?: SendData): AsyncIterable<MsgData>
 }
+
+type StreamCallback<SendData, MsgData> = (
+  stream: Stream<SendData, MsgData>
+) => void
+
+const listeners = new Map<string, StreamCallback<any, any>>()
 
 /**
  * @private
@@ -106,16 +116,10 @@ function createStream<T = unknown, K = unknown>(
   }
 }
 
-type StreamListenerCallback<SendData, MsgData> = (
-  stream: Stream<SendData, MsgData>
-) => void
-
-const streamListenersMap = new Map<string, StreamListenerCallback<any, any>>()
-
 /**
  * @example
  * ```ts
- * const dispose = onOpenStreamChannel('example', (stream) => {
+ * const dispose = onOpenStream('example', (stream) => {
  *   stream.onMessage(async (msg) => {
  *     const data = await doSomething(msg)
  *     stream.send(data)
@@ -123,14 +127,14 @@ const streamListenersMap = new Map<string, StreamListenerCallback<any, any>>()
  * })
  * ```
  */
-export function onOpenStream<T extends keyof StreamProtocol>(
+export function onOpenStream<T extends StreamKey>(
   channel: T,
-  callback: (stream: Stream<StreamProtocol[T][1], StreamProtocol[T][0]>) => void
+  callback: StreamCallback<StreamReturn<T>, StreamData<T>>
 ) {
-  const listener = streamListenersMap.get(channel)
+  const listener = listeners.get(channel)
   if (listener) throw new Error(`Channel "${channel}" already has a listener.`)
-  streamListenersMap.set(channel, callback)
-  return () => streamListenersMap.delete(channel)
+  listeners.set(channel, callback)
+  return () => listeners.delete(channel)
 }
 
 /**
@@ -150,14 +154,14 @@ export function onOpenStream<T extends keyof StreamProtocol>(
  * }
  * ```
  */
-export function openStream<T extends keyof StreamProtocol>(channel: T) {
+export function openStream<T extends StreamKey>(channel: T) {
   const port = browser.runtime.connect({ name: channel })
-  return createStream<StreamProtocol[T][0], StreamProtocol[T][1]>(port)
+  return createStream<StreamData<T>, StreamReturn<T>>(port)
 }
 
 browser.runtime.onConnect.addListener(port => {
   const channel = port.name
-  const listener = streamListenersMap.get(channel)
+  const listener = listeners.get(channel)
 
   if (!listener) {
     console.error('Connect without listener')

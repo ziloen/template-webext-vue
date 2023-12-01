@@ -24,7 +24,7 @@ export default defineConfig({
         index: r('src/content-scripts/index.ts'),
       },
       output: {
-        entryFileNames: 'index.js',
+        entryFileNames: '[name].js',
         extend: true,
       }
     }

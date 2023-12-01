@@ -1,40 +1,34 @@
 import type { ErrorObject } from 'serialize-error'
 import { deserializeError, serializeError } from 'serialize-error'
+import type { ReadonlyDeep } from 'type-fest'
 import type { Runtime } from 'webextension-polyfill'
 import type { MessageProtocol } from './index'
 
-type BridgeMessage<T> = {
+type Message<T> = {
   id: string
   sender: Runtime.MessageSender
   data: T
   timestamp: number
 }
 
-type DataTypeKey = keyof MessageProtocol
-type GetDataType<K extends DataTypeKey> = MessageProtocol[K][0]
-type GetReturnType<K extends DataTypeKey> = MessageProtocol[K][1]
+type MsgKey = keyof MessageProtocol
+type MsgData<K extends MsgKey> = MessageProtocol[K][0]
+type MsgReturn<K extends MsgKey> = MessageProtocol[K][1]
 
-type OnMessageCallback<
-  D = GetDataType<DataTypeKey>,
-  R = GetReturnType<DataTypeKey>
-> = (message: BridgeMessage<D>) => R | Promise<R>
+type MsgCallback<D = MsgData<MsgKey>, R = MsgReturn<MsgKey>> = (
+  message: Message<D>
+) => R | Promise<R>
 
-type PassiveOnMessageCallback<D = GetDataType<DataTypeKey>> = (
-  message: BridgeMessage<D>
-) => void
+type PassiveCallback<D = MsgData<MsgKey>> = (message: Message<D>) => void
 
-type SendMessageParams<K extends DataTypeKey, D = GetDataType<K>> = [
-  D
-] extends [never]
+type Params<K extends MsgKey, D = MsgData<K>> = [D] extends [never]
   ? [id: K]
   : [id: K, data: D]
 
-export async function sendMessage<K extends DataTypeKey>(
-  ...args: SendMessageParams<K>
-) {
+export async function sendMessage<K extends MsgKey>(...args: Params<K>) {
   const [id, data] = args
   const res = (await browser.runtime.sendMessage({ id, data })) as
-    | { data: GetReturnType<K> }
+    | { data: MsgReturn<K> }
     | { error: ErrorObject }
     | null
 
@@ -51,8 +45,8 @@ export async function sendMessage<K extends DataTypeKey>(
   return res.data
 }
 
-const listenersMap = new Map<string, OnMessageCallback>()
-const pasiveListenersMap = new Map<string, Set<PassiveOnMessageCallback>>()
+const listenersMap = new Map<string, MsgCallback>()
+const pasiveListenersMap = new Map<string, Set<PassiveCallback>>()
 
 /**
  * Add a listener to the message channel.
@@ -67,9 +61,9 @@ const pasiveListenersMap = new Map<string, Set<PassiveOnMessageCallback>>()
  * )
  * ```
  */
-export function onMessage<K extends DataTypeKey>(
+export function onMessage<K extends MsgKey>(
   id: K,
-  callback: OnMessageCallback<GetDataType<K>, GetReturnType<K>>,
+  callback: MsgCallback<MsgData<K>, MsgReturn<K>>,
   passive?: false | undefined
 ): () => void
 /**
@@ -88,14 +82,14 @@ export function onMessage<K extends DataTypeKey>(
  * )
  * ```
  */
-export function onMessage<K extends DataTypeKey>(
+export function onMessage<K extends MsgKey>(
   id: K,
-  callback: PassiveOnMessageCallback<GetDataType<K>>,
+  callback: PassiveCallback<ReadonlyDeep<MsgData<K>>>,
   passive: true
 ): () => void
-export function onMessage<K extends DataTypeKey>(
+export function onMessage<K extends MsgKey>(
   id: K,
-  callback: OnMessageCallback<GetDataType<K>, GetReturnType<K>>,
+  callback: MsgCallback<MsgData<K>, MsgReturn<K>>,
   passive = false
 ) {
   if (passive) {
@@ -113,7 +107,7 @@ export function onMessage<K extends DataTypeKey>(
 
 browser.runtime.onMessage.addListener(
   (
-    message: { id: DataTypeKey; data: GetDataType<DataTypeKey> },
+    message: { id: MsgKey; data: MsgData<MsgKey> },
     sender: Runtime.MessageSender
   ) => {
     const id = message.id
