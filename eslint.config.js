@@ -8,5 +8,10 @@ export default [
     ignores: [
       'volar.config.js',
     ]
+  },
+  {
+    rules: {
+      'no-undef': 'off',
+    }
   }
 ]
