@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
-import { onMessage } from 'webext-bridge/content-script'
 import { setupApp } from '~/logic/common-setup'
 import App from './views/App.vue'
+import { onMessage } from '~/utils/webext-bridge'
 
 console.info('[vitesse-webext] Hello world from content script')
 

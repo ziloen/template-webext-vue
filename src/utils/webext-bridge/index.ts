@@ -42,11 +42,12 @@ export type StreamProtocol = {
  *
  * // sender: send message "hello", and wait Promise<number>
  * sendMessage('example', 'hello')
- * 
+ *
  * // receiver: listen for message and send return
  * onMessage('example', ({ data }) => data.length)
  * ```
  */
 export type MessageProtocol = {
-  example: [string, number]
+  'tab-prev': [{ title?: string | undefined }, never]
+  'get-current-tab': [never, { title?: string | undefined }]
 }

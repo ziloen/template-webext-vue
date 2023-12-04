@@ -3,6 +3,7 @@ import { deserializeError, serializeError } from 'serialize-error'
 import type { ReadonlyDeep } from 'type-fest'
 import type { Runtime } from 'webextension-polyfill'
 import type { MessageProtocol } from './index'
+import type { IfNever, Promisable } from 'type-fest'
 
 type Message<T> = {
   id: string
@@ -17,13 +18,16 @@ type MsgReturn<K extends MsgKey> = MessageProtocol[K][1]
 
 type MsgCallback<D = MsgData<MsgKey>, R = MsgReturn<MsgKey>> = (
   message: Message<D>
-) => R | Promise<R>
+  // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
+) => IfNever<R, void, Promisable<R>>
 
 type PassiveCallback<D = MsgData<MsgKey>> = (message: Message<D>) => void
 
-type Params<K extends MsgKey, D = MsgData<K>> = [D] extends [never]
-  ? [id: K]
-  : [id: K, data: D]
+type Params<K extends MsgKey, D = MsgData<K>> = IfNever<
+  D,
+  [id: K],
+  [id: K, data: D]
+>
 
 export async function sendMessage<K extends MsgKey>(...args: Params<K>) {
   const [id, data] = args

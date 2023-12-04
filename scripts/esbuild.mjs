@@ -32,20 +32,20 @@ const options = {
       out: 'background/index'
     },
 
-    // Popup Page
-    {
-      in: r('src/pages/popup/index.html'),
-      out: 'pages/popup/index.html'
-    },
+    // // Popup Page
+    // {
+    //   in: r('src/pages/popup/index.html'),
+    //   out: 'pages/popup/index.html'
+    // },
 
-    // Options Page
-    {
-      in: r('src/pages/options/index.html'),
-      out: 'pages/options/index.html'
-    }
+    // // Options Page
+    // {
+    //   in: r('src/pages/options/index.html'),
+    //   out: 'pages/options/index.html'
+    // }
   ],
   legalComments: 'none',
-  metafile: false,
+  metafile: true,
   bundle: true,
   sourcemap: isDev,
   outdir: r('dist/dev'),

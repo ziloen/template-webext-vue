@@ -1,14 +1,5 @@
-import { onMessage, sendMessage } from 'webext-bridge/background'
 import type { Tabs } from 'webextension-polyfill'
-
-// only on dev mode
-// if (import.meta.hot) {
-//   // @ts-expect-error for background HMR
-//   import('/@vite/client')
-//   // load latest content script
-//   import('./contentScriptHMR')
-// }
-
+import { onMessage, sendMessage } from '~/utils/webext-bridge'
 
 browser.runtime.onInstalled.addListener((): void => {
   // eslint-disable-next-line no-console
@@ -36,18 +27,18 @@ browser.tabs.onActivated.addListener(async ({ tabId }) => {
 
   // eslint-disable-next-line no-console
   console.log('previous tab', tab)
-  sendMessage('tab-prev', { title: tab.title }, { context: 'content-script', tabId })
+  sendMessage('tab-prev', { title: tab.title })
 })
 
 onMessage('get-current-tab', async () => {
   try {
     const tab = await browser.tabs.get(previousTabId)
     return {
-      title: tab?.title,
+      title: tab?.title
     }
   } catch {
     return {
-      title: undefined,
+      title: undefined
     }
   }
 })
