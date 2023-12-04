@@ -10,7 +10,7 @@
   ],
   "editor.codeActionsOnSave": [
     // only sort imports
-    "source.sortImports",
+    // "source.sortImports",
     // remove unused imports & sort imports
     // "source.organizeImports",
     // "source.fixAll.eslint",
@@ -19,6 +19,6 @@
     ".vscode/emmet"
   ],
   "eslint.experimental.useFlatConfig": true,
-  "eslint.format.enable": true,
-  "prettier.enable": false
+  "eslint.format.enable": false,
+  "prettier.enable": true
 }
