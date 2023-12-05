@@ -1,5 +1,5 @@
+import type { CSSProperties } from 'vue'
 import {
-  CSSProperties,
   Fragment,
   Teleport,
   createBlock,
@@ -10,8 +10,6 @@ import {
   ref,
   renderSlot
 } from 'vue'
-
-
 
 const styleUrl = browser.runtime.getURL('dist/contentScripts/style.css')
 
@@ -33,9 +31,7 @@ function initStyle() {
   }))
 }
 
-
 type Props = {
-
   tag?: string
   /**
    * @default 'closed'
@@ -47,14 +43,15 @@ type Props = {
   class?: string
 }
 
-
 export const VueShadow = defineComponent<Props>((props, { slots }) => {
   const containerRef = ref<HTMLElement>(null!)
   const shadowRootRef = ref<ShadowRoot | null>(null)
   const styleLoaded = ref(false)
 
   onMounted(() => {
-    shadowRootRef.value = containerRef.value.attachShadow({ mode: props.mode ?? 'closed' })
+    shadowRootRef.value = containerRef.value.attachShadow({
+      mode: props.mode ?? 'closed'
+    })
     shadowRootRef.value.adoptedStyleSheets = [contentStyle]
     const result = initStyle()
     if (result === true) {
@@ -67,23 +64,34 @@ export const VueShadow = defineComponent<Props>((props, { slots }) => {
   })
 
   return () => (
-    openBlock(), createElementBlock(Fragment, null, [
-      createVNode(
-        props.tag ?? 'div',
-        { style: { display: 'contents' }, class: props.class, ref: containerRef },
-        null,
-        8,
-        ['class']
-      ),
-      shadowRootRef.value
-        ? (openBlock(), createBlock(
-            Teleport,
-            { to: shadowRootRef.value },
-            [renderSlot(slots, 'default')],
-            8,
-            ['to']
-          ))
-        : createCommentVNode('', true),
-    ], 64)
+    openBlock(),
+    createElementBlock(
+      Fragment,
+      null,
+      [
+        createVNode(
+          props.tag ?? 'div',
+          {
+            style: { display: 'contents' },
+            class: props.class,
+            ref: containerRef
+          },
+          null,
+          8,
+          ['class']
+        ),
+        shadowRootRef.value
+          ? (openBlock(),
+            createBlock(
+              Teleport,
+              { to: shadowRootRef.value },
+              [renderSlot(slots, 'default')],
+              8,
+              ['to']
+            ))
+          : createCommentVNode('', true)
+      ],
+      64
+    )
   )
 })
