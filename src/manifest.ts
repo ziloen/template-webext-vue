@@ -1,60 +1,54 @@
-import fs from 'fs-extra'
 import type { Manifest } from 'webextension-polyfill'
-import type PkgType from '../package.json'
-import { isDev, isFirefoxEnv, port, r } from '../scripts/utils'
+import { isDev, isFirefoxEnv } from '../scripts/utils'
 
-export async function getManifest() {
-  const pkg = await fs.readJSON(r('package.json')) as typeof PkgType
-
+export function getManifest() {
   // update this file to update this manifest.json
   // can also be conditional based on your need
   const manifest: Manifest.WebExtensionManifest = {
     manifest_version: 3,
-    name: pkg.displayName || pkg.name,
-    version: pkg.version,
-    description: pkg.description,
+    name: '[Extension Name]',
+    version: '0.0.0',
+    description: '[Extension Description]',
     action: {
-      default_icon: './assets/icon-512.png',
-      default_popup: './dist/pages/popup/index.html'
+      // default_icon: './icon-512.png',
+      default_popup: './pages/popup/index.html'
     },
     options_ui: {
-      page: './dist/pages/options/index.html',
+      page: './pages/options/index.html',
       open_in_tab: true
     },
     background: isFirefoxEnv
-      ? { scripts: ['dist/background/index.mjs'], type: 'module' }
-      : { service_worker: './dist/background/index.mjs' },
-    icons: {
-      16: './assets/icon-512.png',
-      48: './assets/icon-512.png',
-      128: './assets/icon-512.png'
-    },
+      ? { scripts: ['background/index.js'], type: 'module' }
+      : { service_worker: './background/index.js' },
+    // icons: {
+    //   16: './icon-512.png',
+    //   48: './icon-512.png',
+    //   128: './icon-512.png'
+    // },
     permissions: [
       'tabs',
       'storage',
-      'activeTab',
+      'activeTab'
       // 'omnibox',
     ],
-    host_permissions: [
-      '<all_urls>',
-      '*://*/*',
-    ],
+    host_permissions: ['<all_urls>', '*://*/*'],
     content_scripts: [
       {
         matches: ['<all_urls>'],
-        js: ['dist/content-scripts/index.js']
+        js: ['content-scripts/index.js']
       }
     ],
     web_accessible_resources: [
       {
-        resources: ['dist/content-scripts/style.css'],
+        resources: ['content-scripts/index.css'],
         matches: ['<all_urls>']
       }
     ],
     content_security_policy: {
-      extension_pages: isDev
-        ? `script-src 'self' http://localhost:${port}; object-src 'self'`
-        : 'script-src \'self\'; object-src \'self\''
+      extension_pages:
+        isDev && !isFirefoxEnv
+          ? `script-src 'self' http://127.0.0.1:3333; object-src 'self'`
+          : "script-src 'self'; object-src 'self'"
     }
   }
 

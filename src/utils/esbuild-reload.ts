@@ -1,9 +1,12 @@
 /* eslint-disable */
-// @ts-nocheck too many errors
+// @ts-nocheck
 
 // https://esbuild.github.io/api/#hot-reloading-css
-new EventSource('/esbuild').addEventListener('change', e => {
-  const { added, removed, updated } = JSON.parse(e.data)
+new EventSource('http://127.0.0.1:3333/esbuild').addEventListener('change', e => {
+  const data = JSON.parse(e.data)
+  console.log('change', data)
+
+  const { added, removed, updated } = data
 
   if (!added.length && !removed.length && updated.length === 1) {
     for (const link of document.getElementsByTagName('link')) {

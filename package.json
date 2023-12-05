@@ -8,7 +8,8 @@
   "scripts": {
     "dev": "npm run clear && cross-env NODE_ENV=development run-p dev:*",
     "dev-firefox": "npm run clear && cross-env NODE_ENV=development EXTENSION=firefox run-p dev:*",
-    "dev-esbuild": "cross-env NODE_ENV=development node scripts/esbuild.mjs",
+    "dev-esbuild": "cross-env NODE_ENV=development esno scripts/esbuild.ts",
+    "dev-esbuild-firefox": "cross-env NODE_ENV=development EXTENSION=firefox esno scripts/esbuild.ts",
     "dev:prepare": "esno scripts/prepare.ts",
     "dev:background": "npm run build:background -- --mode development",
     "dev:web": "vite",
@@ -33,12 +34,12 @@
     "@biomejs/biome": "1.4.1",
     "@craftamap/esbuild-plugin-html": "0.6.1",
     "@ffflorian/jszip-cli": "^3.5.6",
-    "@iconify/json": "^2.2.151",
+    "@iconify/json": "^2.2.152",
     "@types/fs-extra": "^11.0.4",
     "@types/lodash-es": "^4.17.12",
     "@types/node": "^20.10.3",
     "@types/webextension-polyfill": "^0.10.7",
-    "@unocss/postcss": "0.57.7",
+    "@unocss/postcss": "0.58.0",
     "@unocss/reset": "^0.58.0",
     "@vitejs/plugin-legacy": "5.2.0",
     "@vitejs/plugin-vue": "^4.5.1",
@@ -63,14 +64,14 @@
     "unocss-preset-ziloen": "^0.0.4",
     "unplugin-auto-import": "^0.17.2",
     "unplugin-icons": "^0.18.1",
-    "unplugin-vue": "4.5.1",
+    "unplugin-vue": "4.5.2",
     "unplugin-vue-components": "^0.26.0",
     "unplugin-vue-jsx": "0.2.2",
-    "vite": "^5.0.4",
-    "vitest": "^0.34.6",
+    "vite": "^5.0.5",
+    "vitest": "^1.0.1",
     "volar-service-prettyhtml": "^0.0.17",
-    "vue": "^3.3.9",
-    "web-ext": "^7.8.0",
+    "vue": "^3.3.10",
+    "web-ext": "^7.9.0",
     "webext-bridge": "^6.0.1",
     "webextension-polyfill": "^0.10.0"
   },
@@ -85,8 +86,8 @@
     "ulid": "^2.3.0"
   },
   "webExt": {
-    "sourceDir": "extension",
-    "artifactsDir": "./",
+    "sourceDir": "dist/dev",
+    "artifactsDir": "dist",
     "ignoreFiles": [
       "package-lock.json",
       "yarn.lock",
@@ -97,7 +98,6 @@
       "firefoxPreview": [
         "mv3"
       ],
-      "firefox": "nightly",
       "target": [
         "firefox-desktop"
       ]

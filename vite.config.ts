@@ -33,7 +33,7 @@ export const sharedConfig: UserConfig = {
         {
           'webextension-polyfill': [['*', 'browser']],
           ulid: ['ulid']
-        },
+        }
       ],
       dts: r('src/types/auto-imports.d.ts')
     }) as Plugin,
@@ -93,7 +93,7 @@ export const sharedConfig: UserConfig = {
         /** Array.prototype.toSpliced() */
         'esnext.array.to-spliced',
         /** Array.prototype.with() */
-        'esnext.array.with',
+        'esnext.array.with'
       ]
     }),
 
@@ -103,16 +103,15 @@ export const sharedConfig: UserConfig = {
       enforce: 'post',
       apply: 'build',
       transformIndexHtml(html, { path }) {
-        return html.replace(/"\/assets\//g, `"${relative(dirname(path), '/assets')}/`)
+        return html.replace(
+          /"\/assets\//g,
+          `"${relative(dirname(path), '/assets')}/`
+        )
       }
     }
   ],
   optimizeDeps: {
-    include: [
-      'vue',
-      '@vueuse/core',
-      'webextension-polyfill'
-    ]
+    include: ['vue', '@vueuse/core', 'webextension-polyfill']
   }
 }
 
