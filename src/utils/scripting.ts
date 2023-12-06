@@ -1,12 +1,10 @@
-import { Fn } from '@wai-ri/core'
-import { Scripting } from 'webextension-polyfill'
-
+import type { Fn } from '@wai-ri/core'
+import type { Scripting } from 'webextension-polyfill'
 
 interface InjectionResult<T> extends Scripting.InjectionResult {
   result?: T | undefined
   error?: unknown
 }
-
 
 /**
  * same as `browser.scripting.executeScript` but with type and only accept function

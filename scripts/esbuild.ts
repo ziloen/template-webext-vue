@@ -1,14 +1,14 @@
 import { htmlPlugin } from '@craftamap/esbuild-plugin-html'
-import watcher from '@parcel/watcher'
 import UnoCSS from '@unocss/postcss'
 import type { BuildOptions, Plugin } from 'esbuild'
 import { build, context } from 'esbuild'
 import stylePlugin from 'esbuild-style-plugin'
 import fs from 'fs-extra'
+import { execSync } from 'node:child_process'
+import { watchFile } from 'node:fs'
 import AutoImport from 'unplugin-auto-import/esbuild'
 import VueJSX from 'unplugin-vue-jsx/esbuild'
 import Vue from 'unplugin-vue/esbuild'
-import { getManifest } from '../src/manifest'
 import { isDev, isFirefoxEnv, r } from './utils'
 
 const cwd = process.cwd()
@@ -68,11 +68,13 @@ const options: BuildOptions = {
       sourceMap: isDev,
       root: cwd
     }),
+
     VueJSX({
       include: [/\.tsx$/],
       sourceMap: isDev,
       root: cwd
     }) as unknown as Plugin,
+
     AutoImport({
       include: [
         /\.[tj]sx?$/, // .ts, .tsx, .js, .jsx
@@ -88,11 +90,13 @@ const options: BuildOptions = {
       ],
       dts: r('src/types/auto-imports.d.ts')
     }) as Plugin,
+
     stylePlugin({
       postcss: {
         plugins: [UnoCSS()]
       }
     }),
+
     htmlPlugin({
       files: [
         {
@@ -118,25 +122,21 @@ const options: BuildOptions = {
   ]
 }
 
+fs.ensureDirSync(outdir)
 fs.emptyDirSync(outdir)
-
 writeManifest()
 
 if (isDev) {
   context(options).then(ctx => ctx.watch())
 
-  const subscribe = watcher.subscribe(r('src/manifest.ts'), (err, events) => {
-    if (events.length && !err) {
-      writeManifest()
-    }
+  watchFile(r('src/manifest.ts'), () => {
+    writeManifest()
   })
 } else {
   build(options)
 }
 
 function writeManifest() {
-  console.log('Writing manifest.json')
-  return fs.writeJSON(r(outdir, 'manifest.json'), getManifest(), {
-    spaces: 2
-  })
+  console.log('write manifest')
+  execSync('npx esno ./scripts/manifest.ts', { stdio: 'inherit' })
 }
