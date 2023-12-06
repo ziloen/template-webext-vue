@@ -1,6 +1,6 @@
 import { htmlPlugin } from '@craftamap/esbuild-plugin-html'
+import watcher from '@parcel/watcher'
 import UnoCSS from '@unocss/postcss'
-import chokidar from 'chokidar'
 import type { BuildOptions, Plugin } from 'esbuild'
 import { build, context } from 'esbuild'
 import stylePlugin from 'esbuild-style-plugin'
@@ -9,7 +9,7 @@ import AutoImport from 'unplugin-auto-import/esbuild'
 import VueJSX from 'unplugin-vue-jsx/esbuild'
 import Vue from 'unplugin-vue/esbuild'
 import { getManifest } from '../src/manifest'
-import { isDev, isFirefoxEnv, port, r } from './utils'
+import { isDev, isFirefoxEnv, r } from './utils'
 
 const cwd = process.cwd()
 const outdir = r('dist/dev')
@@ -124,10 +124,12 @@ writeManifest()
 
 if (isDev) {
   context(options).then(ctx => ctx.watch())
-  // const { host } = await ctx.serve({ port, host: 'localhost' })
-  // console.log(`Server running at http://${host}:${port}`)
 
-  chokidar.watch(r('src/manifest.ts')).on('change', writeManifest)
+  const subscribe = watcher.subscribe(r('src/manifest.ts'), (err, events) => {
+    if (events.length && !err) {
+      writeManifest()
+    }
+  })
 } else {
   build(options)
 }
