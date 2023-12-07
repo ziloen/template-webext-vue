@@ -3,11 +3,12 @@ import { isDev, isFirefoxEnv } from '../scripts/utils'
 
 type Permissions = Manifest.PermissionNoPrompt | Manifest.OptionalPermission
 type OptionalPermissions = Manifest.OptionalPermission
+type MV2Keys = 'browser_action' | 'user_scripts' | 'page_action'
 
 export function getManifest() {
   // update this file to update this manifest.json
   // can also be conditional based on your need
-  const manifest: Manifest.WebExtensionManifest = {
+  const manifest: Omit<Manifest.WebExtensionManifest, MV2Keys> = {
     manifest_version: 3,
     name: '[Extension Name]',
     version: '0.0.0',
@@ -50,19 +51,18 @@ export function getManifest() {
       }
     ],
     content_security_policy: {
-      extension_pages:
-        isDev && !isFirefoxEnv
-          ? `script-src 'self' http://127.0.0.1:3333; object-src 'self'`
-          : "script-src 'self'; object-src 'self'"
+      extension_pages: "script-src 'self'; object-src 'self'"
     }
   }
 
-  if (isDev) {
-    // for content script, as browsers will cache them for each reload,
-    // we use a background script to always inject the latest version
-    // see src/background/contentScriptHMR.ts
-    // delete manifest.content_scripts
-    manifest.permissions?.push('webNavigation')
+  if (isFirefoxEnv) {
+    manifest.browser_specific_settings = {
+      gecko: {
+        id: '[Extension ID]',
+        // Firefox ESR latest version
+        strict_min_version: '115.0'
+      }
+    }
   }
 
   return manifest
