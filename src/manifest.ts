@@ -1,6 +1,9 @@
 import type { Manifest } from 'webextension-polyfill'
 import { isDev, isFirefoxEnv } from '../scripts/utils'
 
+type Permissions = Manifest.PermissionNoPrompt | Manifest.OptionalPermission
+type OptionalPermissions = Manifest.OptionalPermission
+
 export function getManifest() {
   // update this file to update this manifest.json
   // can also be conditional based on your need
@@ -28,9 +31,11 @@ export function getManifest() {
     permissions: [
       'tabs',
       'storage',
-      'activeTab'
+      'activeTab',
+      'menus'
       // 'omnibox',
-    ],
+    ] as Permissions[],
+    optional_permissions: [] as OptionalPermissions[],
     host_permissions: ['<all_urls>', '*://*/*'],
     content_scripts: [
       {
