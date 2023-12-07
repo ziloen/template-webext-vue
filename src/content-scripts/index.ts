@@ -4,6 +4,7 @@ import App from './views/App.vue'
 import { onMessage } from '~/utils/webext-bridge'
 
 console.info('[vitesse-webext] Hello world from content script')
+const __NAME__ = 'vitesse-webext-content-script'
 
 // communication example: send previous tab title from background page
 onMessage('tab-prev', ({ data }) => {
@@ -15,7 +16,7 @@ const container = document.createElement('div')
 container.id = __NAME__
 const root = document.createElement('div')
 const shadowDOM = container.attachShadow?.({
-  mode: __DEV__ ? 'open' : 'closed'
+  mode: IS_DEV ? 'open' : 'closed'
 })
 
 // style injection example 1
