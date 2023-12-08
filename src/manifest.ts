@@ -33,7 +33,8 @@ export function getManifest() {
       'tabs',
       'storage',
       'activeTab',
-      'menus'
+      'menus',
+      'alarms'
       // 'omnibox',
     ] as Permissions[],
     optional_permissions: [] as OptionalPermissions[],

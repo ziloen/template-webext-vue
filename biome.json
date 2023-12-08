@@ -21,7 +21,7 @@
       "quoteStyle": "single",
       "jsxQuoteStyle": "double",
       "quoteProperties": "asNeeded",
-      "trailingComma": "none",
+      "trailingComma": "es5",
       "semicolons": "asNeeded",
       "arrowParentheses": "asNeeded",
       "indentWidth": 2,
