@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import { setupApp } from '~/logic/common-setup'
 import App from './views/App.vue'
-import { onMessage } from '~/utils/webext-bridge'
+import { onMessage } from '~/utils/webext'
 
 console.info('[vitesse-webext] Hello world from content script')
 const __NAME__ = 'vitesse-webext-content-script'
