@@ -1,4 +1,5 @@
 export * from './message'
+export * from './storage'
 export * from './stream'
 
 /**
@@ -50,4 +51,8 @@ export type StreamProtocol = {
 export type MessageProtocol = {
   'tab-prev': [{ title?: string | undefined }, never]
   'get-current-tab': [never, { title?: string | undefined }]
+}
+
+export type StorageLocalSchema = {
+  example: string
 }
