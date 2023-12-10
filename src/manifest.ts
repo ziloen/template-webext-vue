@@ -43,6 +43,7 @@ export function getManifest() {
       {
         matches: ['<all_urls>'],
         js: ['content-scripts/index.js'],
+        run_at: 'document_start',
       },
     ],
     web_accessible_resources: [

@@ -25,16 +25,31 @@ type PassiveCallback<D = MsgData<MsgKey>> = (message: Message<D>) => void
 
 type Params<K extends MsgKey, D = MsgData<K>> = IfNever<
   D,
-  [id: K],
-  [id: K, data: D]
+  [id: K, data?: undefined | null, options?: SendOptions],
+  [id: K, data: D, options?: SendOptions]
 >
 
+type SendOptions = {
+  tabId?: number
+  frameId?: number
+}
+
 export async function sendMessage<K extends MsgKey>(...args: Params<K>) {
-  const [id, data] = args
-  const res = (await browser.runtime.sendMessage({ id, data })) as
-    | { data: MsgReturn<K> }
-    | { error: ErrorObject }
-    | null
+  const [id, data, options = {}] = args
+
+  const tabId = options.tabId
+  const frameId = options.frameId
+
+  type Res = { data: MsgReturn<K> } | { error: ErrorObject } | null
+
+  const res =
+    tabId === undefined
+      ? ((await browser.runtime.sendMessage({ id, data })) as Res)
+      : ((await browser.tabs.sendMessage(
+          tabId,
+          { id, data },
+          frameId === undefined ? undefined : { frameId }
+        )) as Res)
 
   if (!res) {
     throw new Error(
