@@ -13,6 +13,9 @@
       "**/*.tsx",
       "**/*.js",
       "**/*.jsx"
+    ],
+    "ignore": [
+      "**/auto-imports.d.ts"
     ]
   },
   "javascript": {

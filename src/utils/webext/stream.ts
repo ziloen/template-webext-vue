@@ -112,7 +112,7 @@ function createStream<T = unknown, K = unknown>(
         cleanupOnMessage()
         cleanupOnDisconnect()
       }
-    }
+    },
   }
 }
 

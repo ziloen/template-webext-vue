@@ -17,7 +17,7 @@ export async function execFunc<T extends Fn>(
   const [execResult] = await browser.scripting.executeScript({
     target,
     func,
-    args
+    args,
   })
 
   if (!execResult) throw new Error('No result')

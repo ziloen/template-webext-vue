@@ -28,7 +28,7 @@ export * from './stream'
  * ```
  */
 export type StreamProtocol = {
-  // example: [string, number]
+  example: [string, number]
 }
 
 /**
@@ -49,12 +49,15 @@ export type StreamProtocol = {
  * ```
  */
 export type MessageProtocol = {
-  // example: [string, number]
+  example: [string, number]
 }
+
+export const WEBEXT_STORAGE_UPDATE_KEY = '__webext_storage_update_key__'
 
 /**
  * Storage Local protocol map
  */
 export type StorageLocalProtocol = {
+  [WEBEXT_STORAGE_UPDATE_KEY]: string
   // example: string
 }

@@ -15,11 +15,11 @@ export function getManifest() {
     description: '[Extension Description]',
     action: {
       // default_icon: './icon-512.png',
-      default_popup: './pages/popup/index.html'
+      default_popup: './pages/popup/index.html',
     },
     options_ui: {
       page: './pages/options/index.html',
-      open_in_tab: true
+      open_in_tab: true,
     },
     background: isFirefoxEnv
       ? { scripts: ['background/index.js'], type: 'module' }
@@ -30,39 +30,40 @@ export function getManifest() {
     //   128: './icon-512.png'
     // },
     permissions: [
-      'tabs',
-      'storage',
       'activeTab',
+      'alarms',
       'menus',
-      'alarms'
-      // 'omnibox',
+      'storage',
+      'tabs',
+      'cookies',
     ] as Permissions[],
     optional_permissions: [] as OptionalPermissions[],
     host_permissions: ['<all_urls>', '*://*/*'],
     content_scripts: [
       {
         matches: ['<all_urls>'],
-        js: ['content-scripts/index.js']
-      }
+        js: ['content-scripts/index.js'],
+      },
     ],
     web_accessible_resources: [
       {
         resources: ['content-scripts/index.css'],
-        matches: ['<all_urls>']
-      }
+        matches: ['<all_urls>'],
+      },
     ],
     content_security_policy: {
-      extension_pages: "script-src 'self'; object-src 'self'"
-    }
+      extension_pages: "script-src 'self'; object-src 'self'",
+    },
   }
 
+  // Firefox specific settings
   if (isFirefoxEnv) {
     manifest.browser_specific_settings = {
       gecko: {
         id: '[Extension ID]',
         // Firefox ESR latest version
-        strict_min_version: '115.0'
-      }
+        strict_min_version: '115.0',
+      },
     }
   }
 
