@@ -28,7 +28,7 @@ export * from './stream'
  * ```
  */
 export type StreamProtocol = {
-  example: [string, number]
+  // example: [string, number]
 }
 
 /**
@@ -49,10 +49,12 @@ export type StreamProtocol = {
  * ```
  */
 export type MessageProtocol = {
-  'tab-prev': [{ title?: string | undefined }, never]
-  'get-current-tab': [never, { title?: string | undefined }]
+  // example: [string, number]
 }
 
-export type StorageLocalSchema = {
-  example: string
+/**
+ * Storage Local protocol map
+ */
+export type StorageLocalProtocol = {
+  // example: string
 }

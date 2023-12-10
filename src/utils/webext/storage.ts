@@ -1,7 +1,7 @@
-import type { StorageLocalSchema } from './index'
+import type { StorageLocalProtocol } from './index'
 
-type Key = keyof StorageLocalSchema
-type StorageValue<K extends Key> = StorageLocalSchema[K]
+type Key = keyof StorageLocalProtocol
+type StorageValue<K extends Key> = StorageLocalProtocol[K]
 
 /**
  * Get storage.local value
