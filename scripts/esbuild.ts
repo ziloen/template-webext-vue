@@ -10,6 +10,7 @@ import AutoImport from 'unplugin-auto-import/esbuild'
 import VueJSX from 'unplugin-vue-jsx/esbuild'
 import Vue from 'unplugin-vue/esbuild'
 import { isDev, isFirefoxEnv, r } from './utils'
+import coreJSPlugin from './esbuild-plugin/core-js'
 
 const cwd = process.cwd()
 const outdir = r('dist/dev')
@@ -19,26 +20,26 @@ const options: BuildOptions = {
     // Content Scripts
     {
       in: r('src/content-scripts/index.ts'),
-      out: 'content-scripts/index'
+      out: 'content-scripts/index',
     },
 
     // Background
     {
       in: r('src/background/main.ts'),
-      out: 'background/index'
+      out: 'background/index',
     },
 
     // Options Page
     {
       in: r('src/pages/options/main.ts'),
-      out: 'pages/options/index'
+      out: 'pages/options/index',
     },
 
     // Popup Page
     {
       in: r('src/pages/popup/main.ts'),
-      out: 'pages/popup/index'
-    }
+      out: 'pages/popup/index',
+    },
   ],
   legalComments: 'none',
   // esbuild-plugin-html need metafile to work
@@ -52,49 +53,63 @@ const options: BuildOptions = {
       isDev ? 'development' : 'production'
     ),
     IS_DEV: JSON.stringify(isDev),
-    IS_FIREFOX_ENV: JSON.stringify(isFirefoxEnv)
+    IS_FIREFOX_ENV: JSON.stringify(isFirefoxEnv),
   },
   drop: isDev ? [] : ['console', 'debugger'],
+  // jsx: 'preserve',
+  // jsxImportSource: 'vue',
   minify: !isDev,
   loader: {
     '.svg': 'file',
     '.png': 'file',
     '.jpg': 'file',
     '.jpeg': 'file',
-    '.mp4': 'file'
+    '.mp4': 'file',
   },
+  // WARNING: Plugins order matters
   plugins: [
+    coreJSPlugin({
+      polyfills: [
+        'web.url.can-parse',
+        'es.array.at',
+        'esnext.array.from-async',
+      ],
+    }),
+
     Vue({
       sourceMap: isDev,
-      root: cwd
+      root: cwd,
+      isProduction: !isDev,
     }),
 
     VueJSX({
       include: [/\.tsx$/],
       sourceMap: isDev,
-      root: cwd
+      root: cwd,
+      version: 3,
+      // optimize: false,
     }) as unknown as Plugin,
 
     AutoImport({
       include: [
         /\.[tj]sx?$/, // .ts, .tsx, .js, .jsx
         /\.vue$/, // .vue
-        /\.vue\?vue/
+        /\.vue\?vue/,
       ],
       imports: [
         'vue',
         {
           'webextension-polyfill': [['*', 'browser']],
-          ulid: ['ulid']
-        }
+          ulid: ['ulid'],
+        },
       ],
-      dts: r('src/types/auto-imports.d.ts')
+      dts: r('src/types/auto-imports.d.ts'),
     }) as Plugin,
 
     stylePlugin({
       postcss: {
-        plugins: [UnoCSS()]
-      }
+        plugins: [UnoCSS()],
+      },
     }),
 
     htmlPlugin({
@@ -105,8 +120,8 @@ const options: BuildOptions = {
           // title: 'Options Page',
           scriptLoading: 'module',
           htmlTemplate: fs.readFileSync(r('src/pages/options/index.html'), {
-            encoding: 'utf-8'
-          })
+            encoding: 'utf-8',
+          }),
         },
         {
           entryPoints: ['src/pages/popup/main.ts'],
@@ -114,12 +129,12 @@ const options: BuildOptions = {
           // title: 'Popup Page',
           scriptLoading: 'module',
           htmlTemplate: fs.readFileSync(r('src/pages/popup/index.html'), {
-            encoding: 'utf-8'
-          })
-        }
-      ]
-    })
-  ]
+            encoding: 'utf-8',
+          }),
+        },
+      ],
+    }),
+  ],
 }
 
 fs.ensureDirSync(outdir)
