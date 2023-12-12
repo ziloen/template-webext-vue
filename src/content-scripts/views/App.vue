@@ -15,7 +15,6 @@ const [show, toggle] = useToggle(false)
       <h1 class="text-lg">
         Vitesse WebExt
       </h1>
-      <SharedSubtitle />
     </div>
     <div class="flex w-10 h-10 rounded-full shadow cursor-pointer bg-teal-600 hover:bg-teal-700" @click="toggle()">
       <pixelarticons-power class="block m-auto text-white text-lg" />

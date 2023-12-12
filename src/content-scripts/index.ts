@@ -1,7 +1,5 @@
 import { createApp } from 'vue'
-import { setupApp } from '~/logic/common-setup'
 import App from './views/App.vue'
-import { onMessage } from '~/utils/webext'
 
 console.info('[vitesse-webext] Hello world from content script')
 const __NAME__ = 'vitesse-webext-content-script'
@@ -31,5 +29,4 @@ shadowDOM.append(styleEl)
 shadowDOM.append(root)
 document.body.append(container)
 const app = createApp(App)
-setupApp(app)
 app.mount(root)
