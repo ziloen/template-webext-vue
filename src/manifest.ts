@@ -32,7 +32,8 @@ export function getManifest() {
     permissions: [
       'activeTab',
       'alarms',
-      'menus',
+      // Firefox use `menus` instead of `contextMenus`
+      isFirefoxEnv ? 'menus' : 'contextMenus',
       'storage',
       'tabs',
       'cookies',

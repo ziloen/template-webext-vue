@@ -30,8 +30,8 @@ type Params<K extends MsgKey, D = MsgData<K>> = IfNever<
 >
 
 type SendOptions = {
-  tabId?: number
-  frameId?: number
+  tabId?: number | undefined
+  frameId?: number | undefined
 }
 
 export async function sendMessage<K extends MsgKey>(...args: Params<K>) {
