@@ -1,5 +1,5 @@
-import { handleMessage } from './message'
-import { handleStream } from './stream'
+import { webextHandleMessage } from './message'
+import { webextHandleStream } from './stream'
 
 export { onMessage, sendMessage } from './message'
 export { getStorageLocal, removeStorageLocal, setStorageLocal } from './storage'
@@ -66,5 +66,5 @@ export type StorageLocalProtocol = {
 }
 
 // side effects
-browser.runtime.onMessage.addListener(handleMessage)
-browser.runtime.onConnect.addListener(handleStream)
+browser.runtime.onMessage.addListener(webextHandleMessage)
+browser.runtime.onConnect.addListener(webextHandleStream)

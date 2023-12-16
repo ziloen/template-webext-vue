@@ -162,7 +162,7 @@ export function openStream<T extends StreamKey>(channel: T) {
 /**
  * Handle stream from runtime.onConnect
  */
-export function handleStream(port: Runtime.Port) {
+export function webextHandleStream(port: Runtime.Port) {
   const channel = port.name
   const listener = listeners.get(channel)
 

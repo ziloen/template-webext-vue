@@ -128,7 +128,7 @@ export function onMessage<K extends MsgKey>(
 /**
  * Handle message from runtime.onMessage
  */
-export function handleMessage(
+export function webextHandleMessage(
   message: { id: MsgKey; data: MsgData<MsgKey> },
   sender: Runtime.MessageSender
 ) {
