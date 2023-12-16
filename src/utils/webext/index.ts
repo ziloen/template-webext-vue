@@ -1,3 +1,6 @@
+import { handleMessage } from './message'
+import { handleStream } from './stream'
+
 export { onMessage, sendMessage } from './message'
 export { getStorageLocal, removeStorageLocal, setStorageLocal } from './storage'
 export { onOpenStream, openStream } from './stream'
@@ -61,3 +64,7 @@ export type StorageLocalProtocol = {
   [WEBEXT_STORAGE_UPDATE_KEY]: string
   // example: string
 }
+
+// side effects
+browser.runtime.onMessage.addListener(handleMessage)
+browser.runtime.onConnect.addListener(handleStream)

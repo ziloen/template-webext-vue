@@ -42,14 +42,15 @@ export async function sendMessage<K extends MsgKey>(...args: Params<K>) {
 
   type Res = { data: MsgReturn<K> } | { error: ErrorObject } | null
 
-  const res =
+  const res = (
     tabId === undefined
-      ? ((await browser.runtime.sendMessage({ id, data })) as Res)
-      : ((await browser.tabs.sendMessage(
+      ? await browser.runtime.sendMessage({ id, data })
+      : await browser.tabs.sendMessage(
           tabId,
           { id, data },
           frameId === undefined ? undefined : { frameId }
-        )) as Res)
+        )
+  ) as Res
 
   if (!res) {
     throw new Error(
@@ -124,31 +125,32 @@ export function onMessage<K extends MsgKey>(
   return () => listenersMap.delete(id)
 }
 
-browser.runtime.onMessage.addListener(
-  (
-    message: { id: MsgKey; data: MsgData<MsgKey> },
-    sender: Runtime.MessageSender
-  ) => {
-    const id = message.id
+/**
+ * Handle message from runtime.onMessage
+ */
+export function handleMessage(
+  message: { id: MsgKey; data: MsgData<MsgKey> },
+  sender: Runtime.MessageSender
+) {
+  const id = message.id
 
-    const passiveListeners = pasiveListenersMap.get(id)
-    if (passiveListeners) {
-      for (const cb of passiveListeners) {
-        try {
-          cb({ sender, data: message.data, id, timestamp: Date.now() })
-        } catch (e) {
-          console.error(e)
-        }
+  const passiveListeners = pasiveListenersMap.get(id)
+  if (passiveListeners) {
+    for (const cb of passiveListeners) {
+      try {
+        cb({ sender, data: message.data, id, timestamp: Date.now() })
+      } catch (e) {
+        console.error(e)
       }
     }
-
-    const listener = listenersMap.get(id)
-    if (!listener) return
-
-    return Promise.resolve(
-      listener({ sender, data: message.data, id, timestamp: Date.now() })
-    )
-      .then(data => ({ data }))
-      .catch((error: Error) => ({ error: serializeError(error) }))
   }
-)
+
+  const listener = listenersMap.get(id)
+  if (!listener) return
+
+  return Promise.resolve(
+    listener({ sender, data: message.data, id, timestamp: Date.now() })
+  )
+    .then(data => ({ data }))
+    .catch((error: Error) => ({ error: serializeError(error) }))
+}

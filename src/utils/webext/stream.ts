@@ -159,7 +159,10 @@ export function openStream<T extends StreamKey>(channel: T) {
   return createStream<StreamData<T>, StreamReturn<T>>(port)
 }
 
-browser.runtime.onConnect.addListener(port => {
+/**
+ * Handle stream from runtime.onConnect
+ */
+export function handleStream(port: Runtime.Port) {
   const channel = port.name
   const listener = listeners.get(channel)
 
@@ -169,4 +172,4 @@ browser.runtime.onConnect.addListener(port => {
   }
 
   listener(createStream(port))
-})
+}
