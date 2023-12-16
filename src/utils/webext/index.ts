@@ -1,6 +1,6 @@
-export * from './message'
-export * from './storage'
-export * from './stream'
+export { onMessage, sendMessage } from './message'
+export { getStorageLocal, removeStorageLocal, setStorageLocal } from './storage'
+export { onOpenStream, openStream } from './stream'
 
 /**
  * Stream protocol map
