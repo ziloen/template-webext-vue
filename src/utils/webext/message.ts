@@ -4,12 +4,14 @@ import type { ReadonlyDeep } from 'type-fest'
 import type { Runtime } from 'webextension-polyfill'
 import type { MessageProtocol } from './index'
 import type { IfNever, Promisable } from 'type-fest'
+import { isTabsApiAvailable } from '~/utils/extension'
+
+const BackgroundForwardMessageId = '__webext_forward_tabs_message__'
 
 type Message<T> = {
   id: string
   sender: Runtime.MessageSender
   data: T
-  timestamp: number
 }
 
 type MsgKey = keyof MessageProtocol
@@ -34,6 +36,8 @@ type SendOptions = {
   frameId?: number | undefined
 }
 
+// TODO: tabs.sendMessage is not available in content script，so we need to use runtime.sendMessage
+
 export async function sendMessage<K extends MsgKey>(...args: Params<K>) {
   const [id, data, options = {}] = args
 
@@ -45,11 +49,21 @@ export async function sendMessage<K extends MsgKey>(...args: Params<K>) {
   const res = (
     tabId === undefined
       ? await browser.runtime.sendMessage({ id, data })
-      : await browser.tabs.sendMessage(
-          tabId,
-          { id, data },
-          frameId === undefined ? undefined : { frameId }
-        )
+      : isTabsApiAvailable()
+        ? await browser.tabs.sendMessage(
+            tabId,
+            { id, data },
+            frameId === undefined ? undefined : { frameId }
+          )
+        : await browser.runtime.sendMessage({
+            id: BackgroundForwardMessageId,
+            data: {
+              tabId,
+              frameId,
+              id,
+              data,
+            },
+          })
   ) as Res
 
   if (!res) {
@@ -138,7 +152,7 @@ export function webextHandleMessage(
   if (passiveListeners) {
     for (const cb of passiveListeners) {
       try {
-        cb({ sender, data: message.data, id, timestamp: Date.now() })
+        cb({ sender, data: message.data, id })
       } catch (e) {
         console.error(e)
       }
@@ -148,9 +162,39 @@ export function webextHandleMessage(
   const listener = listenersMap.get(id)
   if (!listener) return
 
-  return Promise.resolve(
-    listener({ sender, data: message.data, id, timestamp: Date.now() })
-  )
+  return Promise.resolve(listener({ sender, data: message.data, id }))
     .then(data => ({ data }))
     .catch((error: Error) => ({ error: serializeError(error) }))
+}
+
+export function backgroundForwardMessage() {
+  browser.runtime.onMessage.addListener(
+    (
+      message: {
+        id: string
+        data: unknown
+      },
+      sender
+    ) => {
+      if (message?.id === BackgroundForwardMessageId) {
+        const { tabId, frameId, id, data } = message.data as {
+          tabId: number
+          frameId: number | undefined
+          id: string
+          data: unknown
+        }
+
+        return browser.tabs.sendMessage(
+          tabId,
+          {
+            id,
+            data,
+          },
+          frameId === undefined ? undefined : { frameId }
+        )
+      }
+
+      return
+    }
+  )
 }

@@ -1,3 +1,8 @@
+import { backgroundForwardMessage } from "~/utils/webext/message"
+
+// forward content script tabs message
+backgroundForwardMessage()
+
 browser.runtime.onInstalled.addListener((): void => {
   console.log('Extension installed')
 })

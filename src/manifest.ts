@@ -39,7 +39,13 @@ export function getManifest() {
       'cookies',
     ] as Permissions[],
     optional_permissions: [] as OptionalPermissions[],
-    host_permissions: ['<all_urls>', '*://*/*'],
+    // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Match_patterns
+    // https://developer.chrome.com/docs/extensions/develop/concepts/match-patterns
+    host_permissions: [
+      '<all_urls>',
+      '*://*/*',
+      isFirefoxEnv ? 'file:///*' : 'file:///',
+    ],
     content_scripts: [
       {
         matches: ['<all_urls>'],
