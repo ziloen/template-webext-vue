@@ -41,10 +41,12 @@ const options: BuildOptions = {
       out: 'pages/popup/index',
     },
   ],
-  legalComments: 'none',
+  // Move all legal comments to the end of the file.
+  legalComments: 'eof',
   // esbuild-plugin-html need metafile to work
   metafile: true,
   treeShaking: true,
+  // content scripts need to be bundled
   bundle: true,
   sourcemap: isDev,
   outdir: outdir,
