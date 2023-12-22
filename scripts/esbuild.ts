@@ -44,6 +44,7 @@ const options: BuildOptions = {
   legalComments: 'none',
   // esbuild-plugin-html need metafile to work
   metafile: true,
+  treeShaking: true,
   bundle: true,
   sourcemap: isDev,
   outdir: outdir,

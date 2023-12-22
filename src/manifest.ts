@@ -23,7 +23,7 @@ export function getManifest() {
     },
     background: isFirefoxEnv
       ? { scripts: ['background/index.js'], type: 'module' }
-      : { service_worker: './background/index.js' },
+      : { service_worker: './background/index.js', type: 'module' },
     // icons: {
     //   16: './icon-512.png',
     //   48: './icon-512.png',
