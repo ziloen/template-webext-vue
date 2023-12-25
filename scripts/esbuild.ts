@@ -48,6 +48,9 @@ const options: BuildOptions = {
   treeShaking: true,
   // content scripts need to be bundled
   bundle: true,
+  format: 'esm',
+  platform: 'browser',
+  // splitting: true,
   sourcemap: isDev,
   outdir: outdir,
   assetNames: 'assets/[name]-[hash]',
