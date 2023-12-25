@@ -1,18 +1,36 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 /* eslint-disable no-var */
 
+// Environment Variables
+/**
+ * Whether the current environment is development
+ */
 declare const IS_DEV: boolean
+/**
+ * Whether the current environment is Firefox Extension
+ */
 declare const IS_FIREFOX_ENV: boolean
-// use var to make it show up in the globalThis type
 
-// Chrome Extension
+/**
+ * Chrome Extension API
+ *
+ */
 declare var chrome: typeof import('webextension-polyfill') | undefined
 
-// Firefox Extension
-// Auto Import from webextension-polyfill
+/**
+ * Firefox Extension API when use `globalThis.browser`
+ *
+ * Auto Import from webextension-polyfill otherwise
+ */
 declare var browser: typeof import('webextension-polyfill')
 
-// Firefox only https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/Sharing_objects_with_page_scripts#exportfunction
+/**
+ * Exports a function to a different scope
+ *
+ * Firefox only
+ *
+ * [MDN Reference](https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/Sharing_objects_with_page_scripts#exportfunction)
+ */
 declare var exportFunction:
   | ((
       func: () => unknown,
@@ -24,7 +42,13 @@ declare var exportFunction:
     ) => unknown)
   | undefined
 
-// Firefox only https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/Sharing_objects_with_page_scripts#cloneinto
+/**
+ * Clones an object into a different scope
+ *
+ * Firefox only
+ *
+ * [MDN Reference](https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/Sharing_objects_with_page_scripts#cloneinto)
+ */
 declare var cloneInto:
   | ((
       data: unknown,
