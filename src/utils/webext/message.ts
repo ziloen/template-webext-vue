@@ -32,11 +32,9 @@ type Params<K extends MsgKey, D = MsgData<K>> = IfNever<
 >
 
 type SendOptions = {
-  tabId?: number | undefined
+  tabId?: number | undefined | 'sender'
   frameId?: number | undefined
 }
-
-// TODO: tabs.sendMessage is not available in content script，so we need to use runtime.sendMessage
 
 export async function sendMessage<K extends MsgKey>(...args: Params<K>) {
   const [id, data, options = {}] = args
@@ -49,7 +47,7 @@ export async function sendMessage<K extends MsgKey>(...args: Params<K>) {
   const res = (
     tabId === undefined
       ? await browser.runtime.sendMessage({ id, data })
-      : isTabsApiAvailable()
+      : tabId !== 'sender' && isTabsApiAvailable()
         ? await browser.tabs.sendMessage(
             tabId,
             { id, data },
@@ -178,19 +176,26 @@ export function backgroundForwardMessage() {
     ) => {
       if (message?.id === BackgroundForwardMessageId) {
         const { tabId, frameId, id, data } = message.data as {
-          tabId: number
-          frameId: number | undefined
+          // target tab id or sender tab id
+          tabId: number | 'sender'
+          frameId: number | undefined | 'sender'
           id: string
           data: unknown
         }
 
         return browser.tabs.sendMessage(
-          tabId,
+          tabId === 'sender' ? sender.tab!.id! : tabId,
           {
             id,
             data,
           },
-          frameId === undefined ? undefined : { frameId }
+          frameId === undefined
+            ? undefined
+            : frameId === 'sender'
+              ? sender.frameId === undefined
+                ? undefined
+                : { frameId: sender.frameId }
+              : { frameId }
         )
       }
 

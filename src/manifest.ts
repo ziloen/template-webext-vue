@@ -62,6 +62,8 @@ export function getManifest() {
     content_security_policy: {
       extension_pages: "script-src 'self'; object-src 'self'",
     },
+
+    minimum_chrome_version: '100',
   }
 
   // Firefox specific settings
@@ -73,6 +75,8 @@ export function getManifest() {
         strict_min_version: '115.0',
       },
     }
+
+    delete manifest.minimum_chrome_version
   }
 
   return manifest
