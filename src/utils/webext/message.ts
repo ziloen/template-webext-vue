@@ -8,6 +8,8 @@ import { isTabsApiAvailable } from '~/utils/extension'
 
 const BackgroundForwardMessageId = '__webext_forward_tabs_message__'
 
+const MessageIdentifierKey = '__webext_message_identifier__'
+
 type Message<T> = {
   id: string
   sender: Runtime.MessageSender
@@ -33,7 +35,7 @@ type Params<K extends MsgKey, D = MsgData<K>> = IfNever<
 
 type SendOptions = {
   tabId?: number | undefined | 'sender'
-  frameId?: number | undefined
+  frameId?: number | undefined | 'sender'
 }
 
 export async function sendMessage<K extends MsgKey>(...args: Params<K>) {
@@ -46,11 +48,15 @@ export async function sendMessage<K extends MsgKey>(...args: Params<K>) {
 
   const res = (
     tabId === undefined
-      ? await browser.runtime.sendMessage({ id, data })
-      : tabId !== 'sender' && isTabsApiAvailable()
+      ? await browser.runtime.sendMessage({
+          id,
+          data,
+          [MessageIdentifierKey]: 1,
+        })
+      : tabId !== 'sender' && frameId !== 'sender' && isTabsApiAvailable()
         ? await browser.tabs.sendMessage(
             tabId,
-            { id, data },
+            { id, data, [MessageIdentifierKey]: 1 },
             frameId === undefined ? undefined : { frameId }
           )
         : await browser.runtime.sendMessage({
@@ -61,6 +67,7 @@ export async function sendMessage<K extends MsgKey>(...args: Params<K>) {
               id,
               data,
             },
+            [MessageIdentifierKey]: 1,
           })
   ) as Res
 
@@ -141,9 +148,12 @@ export function onMessage<K extends MsgKey>(
  * Handle message from runtime.onMessage
  */
 export function webextHandleMessage(
-  message: { id: MsgKey; data: MsgData<MsgKey> },
+  message:
+    | { id: MsgKey; data: MsgData<MsgKey>; [MessageIdentifierKey]?: 1 }
+    | undefined,
   sender: Runtime.MessageSender
 ) {
+  if (message?.[MessageIdentifierKey] !== 1) return
   const id = message.id
 
   const passiveListeners = pasiveListenersMap.get(id)
@@ -168,34 +178,38 @@ export function webextHandleMessage(
 export function backgroundForwardMessage() {
   browser.runtime.onMessage.addListener(
     (
-      message: {
-        id: string
-        data: unknown
-      },
+      message:
+        | {
+            id?: string
+            data?: unknown
+            [MessageIdentifierKey]?: 1
+          }
+        | null
+        | undefined,
       sender
     ) => {
-      if (message?.id === BackgroundForwardMessageId) {
+      if (
+        message?.[MessageIdentifierKey] === 1 &&
+        message?.id === BackgroundForwardMessageId
+      ) {
         const { tabId, frameId, id, data } = message.data as {
-          // target tab id or sender tab id
           tabId: number | 'sender'
           frameId: number | undefined | 'sender'
           id: string
           data: unknown
         }
 
+        const targetTabId = tabId === 'sender' ? sender.tab!.id! : tabId
+        const targetFrameId = frameId === 'sender' ? sender.frameId : frameId
+
         return browser.tabs.sendMessage(
-          tabId === 'sender' ? sender.tab!.id! : tabId,
+          targetTabId,
           {
             id,
             data,
+            [MessageIdentifierKey]: 1,
           },
-          frameId === undefined
-            ? undefined
-            : frameId === 'sender'
-              ? sender.frameId === undefined
-                ? undefined
-                : { frameId: sender.frameId }
-              : { frameId }
+          targetFrameId === undefined ? undefined : { frameId: targetFrameId }
         )
       }
 
