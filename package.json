@@ -24,7 +24,7 @@
     "@biomejs/biome": "1.4.1",
     "@craftamap/esbuild-plugin-html": "0.6.1",
     "@ffflorian/jszip-cli": "^3.6.2",
-    "@iconify/json": "^2.2.163",
+    "@iconify/json": "^2.2.164",
     "@svgr/core": "8.1.0",
     "@svgr/plugin-jsx": "8.1.0",
     "@types/fs-extra": "^11.0.4",
@@ -59,7 +59,7 @@
     "unplugin-vue-jsx": "0.2.2",
     "vitest": "^1.1.1",
     "volar-service-prettyhtml": "^0.0.17",
-    "vue": "^3.4.3",
+    "vue": "^3.4.4",
     "web-ext": "^7.9.0",
     "webextension-polyfill": "^0.10.0"
   },

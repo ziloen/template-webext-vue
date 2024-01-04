@@ -33,7 +33,7 @@
     "skipLibCheck": true,
     "jsx": "preserve",
     // "jsxImportSource": "vue",
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
     "types": [
