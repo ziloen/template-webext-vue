@@ -13,3 +13,7 @@ dist-ssr
 extension/manifest.json
 node_modules
 .eslintcache
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
