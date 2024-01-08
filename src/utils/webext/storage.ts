@@ -81,3 +81,21 @@ export async function removeStorageLocal(key: string | string[]) {
 export async function setStorageLocal(items: { [K in Key]?: StorageValue<K> }) {
   return browser.storage.local.set(items)
 }
+
+type ChangesType = {
+  [K in keyof StorageLocalProtocol]?: {
+    oldValue?: StorageLocalProtocol[K]
+    newValue?: StorageLocalProtocol[K]
+  }
+} & {
+  [K in string & Record<never, never>]?: {
+    oldValue?: unknown
+    newValue?: unknown
+  }
+}
+
+export function onStorageLocalChange(callback: (changes: ChangesType) => void) {
+  browser.storage.local.onChanged.addListener(callback)
+
+  return () => browser.storage.local.onChanged.removeListener(callback)
+}
