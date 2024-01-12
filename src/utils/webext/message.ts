@@ -1,10 +1,9 @@
 import type { ErrorObject } from 'serialize-error'
 import { deserializeError, serializeError } from 'serialize-error'
-import type { ReadonlyDeep } from 'type-fest'
+import type { IfNever, Promisable, ReadonlyDeep } from 'type-fest'
 import type { Runtime } from 'webextension-polyfill'
-import type { MessageProtocol } from './index'
-import type { IfNever, Promisable } from 'type-fest'
 import { isTabsApiAvailable } from '~/utils/extension'
+import type { MessageProtocol } from './index'
 
 const BackgroundForwardMessageId = '__webext_forward_tabs_message__'
 
