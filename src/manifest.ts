@@ -1,14 +1,28 @@
 import type { Manifest } from 'webextension-polyfill'
 import { isDev, isFirefoxEnv } from '../scripts/utils'
 
-type Permissions = Manifest.PermissionNoPrompt | Manifest.OptionalPermission
+type ChromiumPermissions = 'sidePanel'
+type Permissions =
+  | Manifest.PermissionNoPrompt
+  | Manifest.OptionalPermission
+  | ChromiumPermissions
+
 type OptionalPermissions = Manifest.OptionalPermission
 type MV2Keys = 'browser_action' | 'user_scripts' | 'page_action'
+
+type ChromiumManifest = {
+  side_panel?: {
+    default_path: string
+  }
+}
+
+type MV3 = Omit<Manifest.WebExtensionManifest, MV2Keys> &
+  ChromiumManifest
 
 export function getManifest() {
   // update this file to update this manifest.json
   // can also be conditional based on your need
-  const manifest: Omit<Manifest.WebExtensionManifest, MV2Keys> = {
+  const manifest: MV3 = {
     manifest_version: 3,
     name: '[Extension Name]',
     version: '0.0.0',
@@ -77,6 +91,14 @@ export function getManifest() {
     }
 
     delete manifest.minimum_chrome_version
+
+    if (manifest.side_panel) {
+      manifest.sidebar_action = {
+        default_panel: manifest.side_panel.default_path,
+      }
+
+      delete manifest.side_panel
+    }
   }
 
   return manifest

@@ -15,7 +15,7 @@ declare const IS_FIREFOX_ENV: boolean
  * Chrome Extension API
  *
  */
-declare var chrome: typeof import('webextension-polyfill') | undefined
+// declare var chrome: typeof import('webextension-polyfill') | undefined
 
 /**
  * Firefox Extension API when use `globalThis.browser`
