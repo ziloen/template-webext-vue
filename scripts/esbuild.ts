@@ -45,6 +45,9 @@ const options: BuildOptions = {
   legalComments: 'eof',
   // esbuild-plugin-html need metafile to work
   metafile: true,
+  supported: {
+    nesting: false,
+  },
   treeShaking: true,
   // content scripts need to be bundled
   bundle: true,
