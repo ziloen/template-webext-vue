@@ -1,24 +1,6 @@
 import type { Manifest } from 'webextension-polyfill'
 import { isDev, isFirefoxEnv } from '../scripts/utils'
 
-type ChromiumPermissions = 'sidePanel'
-type Permissions =
-  | Manifest.PermissionNoPrompt
-  | Manifest.OptionalPermission
-  | ChromiumPermissions
-
-type OptionalPermissions = Manifest.OptionalPermission
-type MV2Keys = 'browser_action' | 'user_scripts' | 'page_action'
-
-type ChromiumManifest = {
-  side_panel?: {
-    default_path: string
-  }
-}
-
-type MV3 = Omit<Manifest.WebExtensionManifest, MV2Keys> &
-  ChromiumManifest
-
 export function getManifest() {
   // update this file to update this manifest.json
   // can also be conditional based on your need
@@ -103,3 +85,32 @@ export function getManifest() {
 
   return manifest
 }
+
+type ChromiumPermissions = 'sidePanel'
+
+/**
+ * manifest.permissions
+ */
+type Permissions =
+  | Manifest.PermissionNoPrompt
+  | Manifest.OptionalPermission
+  | ChromiumPermissions
+
+/**
+ * manifest.optional_permissions
+ */
+type OptionalPermissions = Manifest.OptionalPermission
+
+// deprecated keys
+type MV2Keys = 'browser_action' | 'user_scripts' | 'page_action'
+
+type ChromiumManifest = {
+  side_panel?: {
+    default_path: string
+  }
+}
+
+/**
+ * Manifest V3
+ */
+type MV3 = Omit<Manifest.WebExtensionManifest, MV2Keys> & ChromiumManifest
