@@ -6,9 +6,17 @@ export function getManifest() {
   // can also be conditional based on your need
   const manifest: MV3 = {
     manifest_version: 3,
-    name: '[Extension Name]',
     version: '0.0.0',
+    name: '[Extension Name]',
+
+    short_name: '[Extension Short Name]',
     description: '[Extension Description]',
+    // icons: {
+    //   16: './icon-512.png',
+    //   48: './icon-512.png',
+    //   128: './icon-512.png'
+    // },
+
     action: {
       // default_icon: './icon-512.png',
       default_popup: './pages/popup/index.html',
@@ -20,11 +28,15 @@ export function getManifest() {
     background: isFirefoxEnv
       ? { scripts: ['background/index.js'], type: 'module' }
       : { service_worker: './background/index.js', type: 'module' },
-    // icons: {
-    //   16: './icon-512.png',
-    //   48: './icon-512.png',
-    //   128: './icon-512.png'
-    // },
+
+    content_scripts: [
+      {
+        matches: ['<all_urls>'],
+        js: ['content-scripts/index.js'],
+        run_at: 'document_start',
+      },
+    ],
+
     permissions: [
       'activeTab',
       'alarms',
@@ -42,13 +54,6 @@ export function getManifest() {
       '*://*/*',
       isFirefoxEnv ? 'file:///*' : 'file:///',
     ],
-    content_scripts: [
-      {
-        matches: ['<all_urls>'],
-        js: ['content-scripts/index.js'],
-        run_at: 'document_start',
-      },
-    ],
     web_accessible_resources: [
       {
         resources: ['content-scripts/index.css'],
@@ -56,13 +61,11 @@ export function getManifest() {
       },
     ],
     content_security_policy: {
-      extension_pages: "script-src 'self'; object-src 'self'",
+      extension_pages: "script-src 'self'; object-src self'",
     },
-
-    minimum_chrome_version: '100',
   }
 
-  // Firefox specific settings
+  // Browser specific settings
   if (isFirefoxEnv) {
     manifest.browser_specific_settings = {
       gecko: {
@@ -72,8 +75,6 @@ export function getManifest() {
       },
     }
 
-    delete manifest.minimum_chrome_version
-
     if (manifest.side_panel) {
       manifest.sidebar_action = {
         default_panel: manifest.side_panel.default_path,
@@ -81,6 +82,8 @@ export function getManifest() {
 
       delete manifest.side_panel
     }
+  } else {
+    manifest.minimum_chrome_version = '100'
   }
 
   return manifest
